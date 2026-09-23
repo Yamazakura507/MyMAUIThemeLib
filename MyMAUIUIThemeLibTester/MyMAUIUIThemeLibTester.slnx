@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/ThemeForge/">
+    <Project Path="D:/Users/danii/Downloads/Work/MyMAUIThemeLib/Abstractions/Abstractions.csproj" />
+    <Project Path="D:/Users/danii/Downloads/Work/MyMAUIThemeLib/Core/Core.csproj" />
+    <Project Path="D:/Users/danii/Downloads/Work/MyMAUIThemeLib/Maui.Controls/Maui.Controls.csproj" />
+    <Project Path="D:/Users/danii/Downloads/Work/MyMAUIThemeLib/Maui.Studio/Maui.Studio.csproj" />
+    <Project Path="D:/Users/danii/Downloads/Work/MyMAUIThemeLib/Maui/Maui.csproj" />
+  </Folder>
+  <Folder Name="/ThemeForge/Services/">
+    <Project Path="D:/Users/danii/Downloads/Work/MyMAUIThemeLib/TheColor/TheColor.csproj" />
+  </Folder>
+  <Project Path="D:/Users/danii/Downloads/Work/MyMAUIThemeLib/MyMAUIUIThemeLibTester/MyMAUIUIThemeLibTester.csproj">
+    <Deploy Solution="Debug|*" />
+  </Project>
+</Solution>
