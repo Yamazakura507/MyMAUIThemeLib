@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Maui.DI;
 
 namespace MyMAUIUIThemeLibTester
 {
@@ -11,7 +11,14 @@ namespace MyMAUIUIThemeLibTester
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(new AppShell());
+            Window window = new Window(new AppShell());
+
+            window.Created += (_, _) =>
+            {
+                this.InitializeThemeForge();
+            };
+
+            return window;
         }
     }
 }

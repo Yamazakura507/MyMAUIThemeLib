@@ -26,6 +26,7 @@
 
         public const string Outline = "Outline";
         public const string OutlineVariant = "OutlineVariant";
+        public const string Disabled = "Disabled";
 
         public const string Error = "Error";
         public const string OnError = "OnError";

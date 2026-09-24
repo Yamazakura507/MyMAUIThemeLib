@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Maui.DI;
 
 namespace MyMAUIUIThemeLibTester
 {
@@ -7,17 +8,20 @@ namespace MyMAUIUIThemeLibTester
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
+
             builder
                 .UseMauiApp<App>()
-                .ConfigureFonts(fonts =>
+                .UseThemeForge(options =>
                 {
-                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                    // Локальное хранилище тем.
+                    // Если не задать, будет использоваться in-memory хранилище.
+                    options.StorageDirectory = FileSystem.AppDataDirectory;
+                    options.SeedBuiltInThemes = true;
                 });
 
-#if DEBUG
-    		builder.Logging.AddDebug();
-#endif
+            #if DEBUG
+                builder.Logging.AddDebug();
+            #endif
 
             return builder.Build();
         }
