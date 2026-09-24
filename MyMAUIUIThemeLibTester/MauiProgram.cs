@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using Maui.DI;
+using ThemeForge.Maui.DI;
+using ThemeForge.Services.Maui.TheColor.DI;
 
 namespace MyMAUIUIThemeLibTester
 {
@@ -7,17 +8,16 @@ namespace MyMAUIUIThemeLibTester
     {
         public static MauiApp CreateMauiApp()
         {
-            var builder = MauiApp.CreateBuilder();
+            MauiAppBuilder builder = MauiApp.CreateBuilder();
 
             builder
                 .UseMauiApp<App>()
                 .UseThemeForge(options =>
                 {
-                    // Локальное хранилище тем.
-                    // Если не задать, будет использоваться in-memory хранилище.
                     options.StorageDirectory = FileSystem.AppDataDirectory;
                     options.SeedBuiltInThemes = true;
-                });
+                })
+                .UseThemeForgeTheColorApi(builder.Configuration.GetSection("ThemeForge:TheColor"));
 
             #if DEBUG
                 builder.Logging.AddDebug();

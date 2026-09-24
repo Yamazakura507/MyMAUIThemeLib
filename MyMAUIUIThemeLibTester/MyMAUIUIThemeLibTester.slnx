@@ -1,13 +1,14 @@
 <Solution>
   <Folder Name="/ThemeForge/">
-    <Project Path="D:/Users/danii/Downloads/Work/MyMAUIThemeLib/Abstractions/Abstractions.csproj" />
-    <Project Path="D:/Users/danii/Downloads/Work/MyMAUIThemeLib/Core/Core.csproj" />
-    <Project Path="D:/Users/danii/Downloads/Work/MyMAUIThemeLib/Maui.Controls/Maui.Controls.csproj" />
-    <Project Path="D:/Users/danii/Downloads/Work/MyMAUIThemeLib/Maui.Studio/Maui.Studio.csproj" />
-    <Project Path="D:/Users/danii/Downloads/Work/MyMAUIThemeLib/Maui/Maui.csproj" />
+    <Project Path="../ThemeForge/Abstractions/ThemeForge.Abstractions.csproj" />
+    <Project Path="../ThemeForge/Core/ThemeForge.Core.csproj" />
+    <Project Path="../ThemeForge/Maui.Controls/ThemeForge.Maui.Controls.csproj" />
+    <Project Path="../ThemeForge/Maui.Studio/ThemeForge.Maui.Studio.csproj" />
+    <Project Path="../ThemeForge/Maui/ThemeForge.Maui.csproj" />
   </Folder>
   <Folder Name="/ThemeForge/Services/">
-    <Project Path="D:/Users/danii/Downloads/Work/MyMAUIThemeLib/TheColor/TheColor.csproj" />
+    <Project Path="../ThemeForge/Services/Maui.TheColor/ThemeForge.Services.Maui.TheColor.csproj" Id="de5c9fe5-028b-4712-b49b-2856b1666211" />
+    <Project Path="../ThemeForge/Services/TheColor/ThemeForge.Services.TheColor.csproj" />
   </Folder>
   <Project Path="D:/Users/danii/Downloads/Work/MyMAUIThemeLib/MyMAUIUIThemeLibTester/MyMAUIUIThemeLibTester.csproj">
     <Deploy Solution="Debug|*" />

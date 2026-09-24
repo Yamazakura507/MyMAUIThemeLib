@@ -1,4 +1,4 @@
-﻿using Maui.DI;
+﻿using ThemeForge.Maui.DI;
 
 namespace MyMAUIUIThemeLibTester
 {

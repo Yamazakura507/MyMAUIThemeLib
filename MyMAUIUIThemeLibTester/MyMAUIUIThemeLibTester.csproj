@@ -72,7 +72,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Maui\Maui.csproj" />
+	  <ProjectReference Include="..\ThemeForge\Maui\ThemeForge.Maui.csproj" />
+	  <ProjectReference Include="..\ThemeForge\Services\Maui.TheColor\ThemeForge.Services.Maui.TheColor.csproj" />
 	</ItemGroup>
 
 </Project>
