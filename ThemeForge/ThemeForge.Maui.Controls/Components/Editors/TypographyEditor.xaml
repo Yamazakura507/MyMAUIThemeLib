@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ThemeForge.Maui.Controls.Components.Editors.TypographyEditor"
+             xmlns:editors="clr-namespace:ThemeForge.Maui.Controls.ComponentModels.Editors"
+             x:DataType="editors:TypographyEditorViewModel">
+    <VerticalStackLayout Spacing="10" Padding="8">
+        <Label Text="Типографика" FontAttributes="Bold" />
+
+        <Button
+            Text="Загрузить шрифты"
+            Command="{Binding LoadFontsCommand}" />
+
+        <Picker
+            Title="Шрифт"
+            ItemsSource="{Binding FontFamilies}"
+            SelectedItem="{Binding SelectedFontFamily, Mode=TwoWay}" />
+
+        <HorizontalStackLayout>
+            <Label Text="Размер" VerticalOptions="Center" />
+            <Slider
+                Minimum="{Binding MinFontSize}"
+                Maximum="{Binding MaxFontSize}"
+                Value="{Binding FontSize, Mode=TwoWay}"
+                WidthRequest="180" />
+            <Label Text="{Binding FontSize, StringFormat='{0:F0}'}" VerticalOptions="Center" />
+        </HorizontalStackLayout>
+
+        <HorizontalStackLayout Spacing="12">
+            <CheckBox IsChecked="{Binding IsBold, Mode=TwoWay}" />
+            <Label Text="Bold" VerticalOptions="Center" />
+
+            <CheckBox IsChecked="{Binding IsItalic, Mode=TwoWay}" />
+            <Label Text="Italic" VerticalOptions="Center" />
+        </HorizontalStackLayout>
+
+        <HorizontalStackLayout Spacing="12">
+            <CheckBox IsChecked="{Binding HasStrikethrough, Mode=TwoWay}" />
+            <Label Text="Strikethrough" VerticalOptions="Center" />
+
+            <CheckBox IsChecked="{Binding HasUnderline, Mode=TwoWay}" />
+            <Label Text="Underline" VerticalOptions="Center" />
+        </HorizontalStackLayout>
+
+        <Picker
+            Title="Стиль зачеркивания"
+            ItemsSource="{Binding DecorationStyles}"
+            SelectedItem="{Binding StrikethroughStyle, Mode=TwoWay}"
+            IsEnabled="{Binding HasStrikethrough}" />
+
+        <Picker
+            Title="Стиль подчеркивания"
+            ItemsSource="{Binding DecorationStyles}"
+            SelectedItem="{Binding UnderlineStyle, Mode=TwoWay}"
+            IsEnabled="{Binding HasUnderline}" />
+    </VerticalStackLayout>
+</ContentView>

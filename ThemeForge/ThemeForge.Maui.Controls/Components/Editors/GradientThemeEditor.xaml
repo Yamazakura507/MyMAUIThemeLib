@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ThemeForge.Maui.Controls.Components.Editors.GradientThemeEditor"
+             xmlns:editors="clr-namespace:ThemeForge.Maui.Controls.ComponentModels.Editors"
+             x:DataType="editors:GradientThemeEditorViewModel">
+    <ScrollView>
+        <VerticalStackLayout Spacing="10" Padding="8">
+            <Label Text="Градиентная тема" FontAttributes="Bold" />
+
+            <Picker
+                Title="Тип градиента"
+                ItemsSource="{Binding Types}"
+                SelectedItem="{Binding Type, Mode=TwoWay}" />
+
+            <HorizontalStackLayout Spacing="8">
+                <Label Text="Цвета:" VerticalOptions="Center" />
+                <Stepper
+                    Minimum="2"
+                    Maximum="4"
+                    Value="{Binding ColorCount, Mode=TwoWay}" />
+                <Label Text="{Binding ColorCount}" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <CollectionView ItemsSource="{Binding Stops}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="editors:GradientStopViewModel">
+                        <Grid ColumnDefinitions="*,120" Padding="0,4">
+                            <Entry
+                                Grid.Column="0"
+                                Text="{Binding Hex, Mode=TwoWay}"
+                                Placeholder="#HEX" />
+                            <Label
+                                Grid.Column="1"
+                                Text="{Binding Offset, StringFormat='{0:F2}'}"
+                                VerticalOptions="Center" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Label Text="Геометрия" FontAttributes="Bold" />
+
+            <HorizontalStackLayout IsVisible="{Binding Type, Converter={x:Static editors:GradientTypeVisibility.IsLinear}}">
+                <Label Text="Угол" VerticalOptions="Center" />
+                <Slider
+                    Minimum="0"
+                    Maximum="360"
+                    Value="{Binding AngleDegrees, Mode=TwoWay}"
+                    WidthRequest="180" />
+            </HorizontalStackLayout>
+
+            <Grid ColumnDefinitions="*,*" IsVisible="{Binding Type, Converter={x:Static editors:GradientTypeVisibility.IsRadial}}">
+                <VerticalStackLayout Grid.Column="0">
+                    <Label Text="Center X" />
+                    <Slider Minimum="0" Maximum="1" Value="{Binding CenterX, Mode=TwoWay}" />
+                </VerticalStackLayout>
+                <VerticalStackLayout Grid.Column="1">
+                    <Label Text="Center Y" />
+                    <Slider Minimum="0" Maximum="1" Value="{Binding CenterY, Mode=TwoWay}" />
+                </VerticalStackLayout>
+            </Grid>
+
+            <HorizontalStackLayout IsVisible="{Binding Type, Converter={x:Static editors:GradientTypeVisibility.IsRadial}}">
+                <Label Text="Radius" VerticalOptions="Center" />
+                <Slider
+                    Minimum="0.1"
+                    Maximum="2"
+                    Value="{Binding Radius, Mode=TwoWay}"
+                    WidthRequest="180" />
+            </HorizontalStackLayout>
+
+            <Label Text="Эффект" FontAttributes="Bold" />
+
+            <HorizontalStackLayout>
+                <Label Text="Включить" VerticalOptions="Center" />
+                <Switch IsToggled="{Binding EffectEnabled, Mode=TwoWay}" />
+            </HorizontalStackLayout>
+
+            <Picker
+                Title="Тип эффекта"
+                ItemsSource="{Binding EffectKinds}"
+                SelectedItem="{Binding EffectKind, Mode=TwoWay}"
+                IsEnabled="{Binding EffectEnabled}" />
+
+            <HorizontalStackLayout IsEnabled="{Binding EffectEnabled}">
+                <Label Text="Intensity" VerticalOptions="Center" />
+                <Slider
+                    Minimum="0"
+                    Maximum="1"
+                    Value="{Binding EffectIntensity, Mode=TwoWay}"
+                    WidthRequest="140" />
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout IsEnabled="{Binding EffectEnabled}">
+                <Label Text="Speed" VerticalOptions="Center" />
+                <Slider
+                    Minimum="0.1"
+                    Maximum="3"
+                    Value="{Binding EffectSpeed, Mode=TwoWay}"
+                    WidthRequest="140" />
+            </HorizontalStackLayout>
+
+            <Button
+                Text="Собрать тему"
+                Command="{Binding BuildCommand}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentView>

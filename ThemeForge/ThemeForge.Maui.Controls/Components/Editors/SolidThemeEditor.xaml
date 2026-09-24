@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ThemeForge.Maui.Controls.Components.Editors.SolidThemeEditor"
+             xmlns:editors="clr-namespace:ThemeForge.Maui.Controls.ComponentModels.Editors"
+             x:DataType="editors:SolidThemeEditorViewModel">
+    <VerticalStackLayout Spacing="10" Padding="8">
+        <Label Text="Простая цветовая тема" FontAttributes="Bold" />
+
+        <Picker
+            Title="Режим гармонии"
+            ItemsSource="{Binding Harmonies}"
+            SelectedItem="{Binding Harmony, Mode=TwoWay}" />
+
+        <Entry
+            Placeholder="#HEX"
+            Text="{Binding BaseHex, Mode=TwoWay}" />
+
+        <Button
+            Text="Сгенерировать"
+            Command="{Binding GenerateCommand}" />
+
+        <CollectionView
+            ItemsSource="{Binding Palette}"
+            HeightRequest="80">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Horizontal" ItemSpacing="6" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <BoxView
+                        Color="{Binding Hex}"
+                        WidthRequest="42"
+                        HeightRequest="42" />
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </VerticalStackLayout>
+</ContentView>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ThemeForge.Maui.Controls.Components.Themes.ThemePresetCard"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:abstractions="clr-namespace:ThemeForge.Abstractions;assembly=ThemeForge.Abstractions"
+             xmlns:theme="clr-namespace:ThemeForge.Maui.Controls.Components.Themes"
+             x:DataType="theme:ThemePresetCard">
+    <ContentView.Behaviors>
+        <toolkit:TouchBehavior
+            LongPressDuration="500"
+            LongPressCommand="{Binding ShowOverlayCommand}" />
+    </ContentView.Behaviors>
+
+    <Grid
+        x:Name="RootGrid"
+        MinimumHeightRequest="120">
+        <Grid.GestureRecognizers>
+            <PointerGestureRecognizer
+                PointerEntered="OnPointerEntered"
+                PointerExited="OnPointerExited" />
+        </Grid.GestureRecognizers>
+
+        <Border
+            x:Name="CardBorder"
+            StrokeThickness="1"
+            Stroke="{DynamicResource Theme.Color.Outline}"
+            Background="{DynamicResource Theme.Card.DisplayBrush}"
+            Padding="12">
+            <VerticalStackLayout Spacing="6">
+                <Label
+                    x:Name="TitleLabel"
+                    FontAttributes="Bold"
+                    TextColor="{DynamicResource Theme.Color.OnPrimary}"
+                    LineBreakMode="TailTruncation" />
+                <Label
+                    x:Name="DetailLabel"
+                    FontSize="12"
+                    TextColor="{DynamicResource Theme.Color.OnPrimary}"
+                    Opacity="0.85"
+                    LineBreakMode="TailTruncation" />
+            </VerticalStackLayout>
+        </Border>
+
+        <BoxView
+            x:Name="Backdrop"
+            BackgroundColor="#99000000"
+            Opacity="0"
+            IsVisible="False" />
+
+        <VerticalStackLayout
+            x:Name="OverlayGrid"
+            Padding="12"
+            Spacing="8"
+            Opacity="0"
+            IsVisible="False"
+            RotationY="-90"
+            VerticalOptions="Center"
+            HorizontalOptions="Center">
+
+            <Picker
+                Title="Режим отображения"
+                ItemsSource="{Binding Modes}"
+                SelectedItem="{Binding PresentationMode, Mode=TwoWay}"
+                TextColor="White"
+                TitleColor="White" />
+
+            <Button
+                Text="Применить"
+                Clicked="OnApplyClicked"
+                BackgroundColor="#22FFFFFF"
+                TextColor="White"
+                CornerRadius="8" />
+
+            <Button
+                Text="В пресеты"
+                Clicked="OnFavoriteClicked"
+                BackgroundColor="#22FFFFFF"
+                TextColor="White"
+                CornerRadius="8" />
+
+            <Button
+                Text="Удалить"
+                Clicked="OnDeleteClicked"
+                BackgroundColor="#44FF5252"
+                TextColor="White"
+                CornerRadius="8" />
+        </VerticalStackLayout>
+    </Grid>
+</ContentView>
