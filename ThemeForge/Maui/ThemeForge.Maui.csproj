@@ -26,4 +26,8 @@
 	<ItemGroup>
 		<MauiXaml Update="Styles\ThemeForgeDefaults.xaml" Generator="MSBuild:Compile" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Update="Microsoft.AspNetCore.Components.WebView.Maui" Version="10.0.110" />
+	</ItemGroup>
 </Project>

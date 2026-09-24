@@ -2,9 +2,9 @@
   <Folder Name="/ThemeForge/">
     <Project Path="../ThemeForge/Abstractions/ThemeForge.Abstractions.csproj" />
     <Project Path="../ThemeForge/Core/ThemeForge.Core.csproj" />
-    <Project Path="../ThemeForge/Maui.Controls/ThemeForge.Maui.Controls.csproj" />
     <Project Path="../ThemeForge/Maui.Studio/ThemeForge.Maui.Studio.csproj" />
     <Project Path="../ThemeForge/Maui/ThemeForge.Maui.csproj" />
+    <Project Path="../ThemeForge/ThemeForge.Maui.Controls/ThemeForge.Maui.Controls.csproj" Id="9d04a480-afd7-425d-ba27-f6a7c53cbe1f" />
   </Folder>
   <Folder Name="/ThemeForge/Services/">
     <Project Path="../ThemeForge/Services/Maui.TheColor/ThemeForge.Services.Maui.TheColor.csproj" Id="de5c9fe5-028b-4712-b49b-2856b1666211" />
