@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ThemeForge.Maui.Controls.Components.Themes.ThemePresetCard"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             xmlns:abstractions="clr-namespace:ThemeForge.Abstractions;assembly=ThemeForge.Abstractions"
+             xmlns:skia="clr-namespace:ThemeForge.Maui.Controls.ComponentModels.Skia"
              xmlns:theme="clr-namespace:ThemeForge.Maui.Controls.Components.Themes"
              x:DataType="theme:ThemePresetCard">
     <ContentView.Behaviors>
@@ -15,6 +15,7 @@
     <Grid
         x:Name="RootGrid"
         MinimumHeightRequest="120">
+
         <Grid.GestureRecognizers>
             <PointerGestureRecognizer
                 PointerEntered="OnPointerEntered"
@@ -25,28 +26,51 @@
             x:Name="CardBorder"
             StrokeThickness="1"
             Stroke="{DynamicResource Theme.Color.Outline}"
-            Background="{DynamicResource Theme.Card.DisplayBrush}"
-            Padding="12">
-            <VerticalStackLayout Spacing="6">
-                <Label
-                    x:Name="TitleLabel"
-                    FontAttributes="Bold"
-                    TextColor="{DynamicResource Theme.Color.OnPrimary}"
-                    LineBreakMode="TailTruncation" />
-                <Label
-                    x:Name="DetailLabel"
-                    FontSize="12"
-                    TextColor="{DynamicResource Theme.Color.OnPrimary}"
-                    Opacity="0.85"
-                    LineBreakMode="TailTruncation" />
-            </VerticalStackLayout>
+            BackgroundColor="Transparent"
+            Padding="0">
+
+            <Grid>
+                <skia:EffectCanvas
+                    x:Name="BackgroundCanvas"
+                    HorizontalOptions="FillAndExpand"
+                    VerticalOptions="FillAndExpand"
+                    BackgroundColor="Transparent" />
+
+                <VerticalStackLayout
+                    Padding="12"
+                    Spacing="6">
+
+                    <Label
+                        x:Name="TitleLabel"
+                        FontAttributes="Bold"
+                        TextColor="{DynamicResource Theme.Color.OnPrimary}"
+                        LineBreakMode="TailTruncation" />
+
+                    <Label
+                        x:Name="DetailLabel"
+                        FontSize="12"
+                        TextColor="{DynamicResource Theme.Color.OnPrimary}"
+                        Opacity="0.85"
+                        LineBreakMode="TailTruncation" />
+                </VerticalStackLayout>
+            </Grid>
         </Border>
 
-        <BoxView
+        <skia:BackdropBlurCanvas
             x:Name="Backdrop"
-            BackgroundColor="#99000000"
+            SourceBrush="{Binding SourceBrush, Source={x:Reference BackgroundCanvas}}"
+            BlurRadius="18"
+            ScrimOpacity="0.55"
             Opacity="0"
-            IsVisible="False" />
+            IsVisible="False"
+            HorizontalOptions="FillAndExpand"
+            VerticalOptions="FillAndExpand"
+            BackgroundColor="Transparent">
+
+            <skia:BackdropBlurCanvas.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding HideOverlayCommand}" />
+            </skia:BackdropBlurCanvas.GestureRecognizers>
+        </skia:BackdropBlurCanvas>
 
         <VerticalStackLayout
             x:Name="OverlayGrid"

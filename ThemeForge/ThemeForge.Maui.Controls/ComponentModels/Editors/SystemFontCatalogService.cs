@@ -4,8 +4,6 @@ namespace ThemeForge.Maui.Controls.ComponentModels.Editors
 {
     /// <summary>
     /// Сервис системных шрифтов.
-    /// На Android используется расширенный fallback-список, потому что публичного кроссплатформенного
-    /// перечисления всех шрифтов нет.
     /// </summary>
     public sealed class SystemFontCatalogService : IFontCatalogService
     {
@@ -34,8 +32,36 @@ namespace ThemeForge.Maui.Controls.ComponentModels.Editors
                 families.AddRange(UIKit.UIFont.FamilyNames);
             #elif WINDOWS
                 families.AddRange(Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies());
+            #elif ANDROID
+                List<string> systemFonts = GetSystemAndroidFontFiles();
+
+                if (systemFonts.Count > 0)
+                {
+                    families.AddRange(systemFonts);
+                }
+                else
+                {
+                    families.Add(global::Android.Graphics.Typeface.Default?.SystemFontFamilyName);
+
+                    families.AddRange(
+                    [
+                        "sans-serif",
+                        "serif",
+                        "monospace",
+                        "casual",
+                        "cursive",
+                        "sans-serif-light",
+                        "sans-serif-condensed",
+                        "sans-serif-thin",
+                        "sans-serif-medium",
+                        "Roboto",
+                        "Google Sans"
+                    ]);
+                }
             #endif
-           
+
+            families.AddRange(CommonFamilies);
+
             List<string> result = families
                 .Where(f => !string.IsNullOrWhiteSpace(f))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
@@ -44,5 +70,30 @@ namespace ThemeForge.Maui.Controls.ComponentModels.Editors
 
             return Task.FromResult<IReadOnlyList<string>>(result);
         }
+
+    #if ANDROID
+        private List<string> GetSystemAndroidFontFiles()
+        {
+            List<string> fontPaths = new ();
+            string fontsFolder = "/system/fonts/";
+
+            if (Directory.Exists(fontsFolder))
+            {
+                string[] files = Directory.GetFiles(fontsFolder, "*.*", SearchOption.TopDirectoryOnly);
+
+                foreach (string file in files)
+                {
+                    string ext = Path.GetExtension(file).ToLower();
+
+                    if (ext == ".ttf" || ext == ".otf")
+                    {
+                        fontPaths.Add(Path.GetFileNameWithoutExtension(file));
+                    }
+                }
+            }
+
+            return fontPaths;
+        }
+    #endif
     }
 }

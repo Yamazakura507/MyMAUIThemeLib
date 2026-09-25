@@ -2,86 +2,106 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ThemeForge.Maui.Controls.Components.Preview.ThemePreviewSurface"
+             xmlns:skia="clr-namespace:ThemeForge.Maui.Controls.ComponentModels.Skia"
              xmlns:preview="clr-namespace:ThemeForge.Maui.Controls.Components.Preview"
              x:DataType="preview:ThemePreviewSurface">
-    <ScrollView>
-        <VerticalStackLayout
-            x:Name="PreviewRoot"
-            Spacing="12"
-            Padding="16"
-            BackgroundColor="{DynamicResource Theme.Brush.Background}">
+    <Grid>
+        <skia:EffectCanvas
+            x:Name="BackgroundCanvas"
+            HorizontalOptions="FillAndExpand"
+            VerticalOptions="FillAndExpand"
+            BackgroundColor="Transparent" />
 
-            <Label
-                Text="Preview"
-                Style="{StaticResource ThemeForge.TitleLabel}" />
+        <ScrollView BackgroundColor="Transparent">
+            <VerticalStackLayout
+                x:Name="PreviewRoot"
+                Spacing="12"
+                Padding="16"
+                BackgroundColor="Transparent">
 
-            <Label
-                Text="Secondary text"
-                Style="{StaticResource ThemeForge.CaptionLabel}" />
+                <Label
+                    Text="Preview"
+                    Style="{StaticResource ThemeForge.TitleLabel}" />
 
-            <Button
-                Text="Primary Button"
-                Style="{StaticResource ThemeForge.Button}" />
+                <Label
+                    Text="Secondary text"
+                    Style="{StaticResource ThemeForge.CaptionLabel}" />
 
-            <Entry
-                Placeholder="Entry"
-                Text="Sample"
-                Style="{StaticResource ThemeForge.Entry}" />
+                <Button
+                    Text="Primary Button"
+                    Style="{StaticResource ThemeForge.Button}" />
 
-            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="8">
-                <HorizontalStackLayout Grid.Row="0" Grid.Column="0" Spacing="6">
-                    <CheckBox IsChecked="True" Style="{StaticResource ThemeForge.CheckBox}" />
-                    <Label Text="Checked" VerticalOptions="Center" />
-                </HorizontalStackLayout>
+                <Entry
+                    Placeholder="Entry"
+                    Text="Sample"
+                    Style="{StaticResource ThemeForge.Entry}" />
 
-                <HorizontalStackLayout Grid.Row="0" Grid.Column="1" Spacing="6">
-                    <CheckBox IsChecked="False" Style="{StaticResource ThemeForge.CheckBox}" />
-                    <Label Text="Unchecked" VerticalOptions="Center" />
-                </HorizontalStackLayout>
+                <Grid
+                    ColumnDefinitions="*,*"
+                    RowDefinitions="Auto,Auto"
+                    ColumnSpacing="12"
+                    RowSpacing="8">
 
-                <HorizontalStackLayout Grid.Row="1" Grid.Column="0" Spacing="6">
-                    <RadioButton IsChecked="True" GroupName="preview-radio" Style="{StaticResource ThemeForge.RadioButton}" />
-                    <Label Text="Selected" VerticalOptions="Center" />
-                </HorizontalStackLayout>
+                    <HorizontalStackLayout Grid.Row="0" Grid.Column="0" Spacing="6">
+                        <CheckBox IsChecked="True" Style="{StaticResource ThemeForge.CheckBox}" />
+                        <Label Text="Checked" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
 
-                <HorizontalStackLayout Grid.Row="1" Grid.Column="1" Spacing="6">
-                    <RadioButton IsChecked="False" GroupName="preview-radio" Style="{StaticResource ThemeForge.RadioButton}" />
-                    <Label Text="Unselected" VerticalOptions="Center" />
-                </HorizontalStackLayout>
-            </Grid>
+                    <HorizontalStackLayout Grid.Row="0" Grid.Column="1" Spacing="6">
+                        <CheckBox IsChecked="False" Style="{StaticResource ThemeForge.CheckBox}" />
+                        <Label Text="Unchecked" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
 
-            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
-                <HorizontalStackLayout Grid.Column="0" Spacing="6">
-                    <Switch IsToggled="True" Style="{StaticResource ThemeForge.Switch}" />
-                    <Label Text="On" VerticalOptions="Center" />
-                </HorizontalStackLayout>
+                    <HorizontalStackLayout Grid.Row="1" Grid.Column="0" Spacing="6">
+                        <RadioButton
+                            IsChecked="True"
+                            GroupName="preview-radio"
+                            Style="{StaticResource ThemeForge.RadioButton}" />
+                        <Label Text="Selected" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
 
-                <HorizontalStackLayout Grid.Column="1" Spacing="6">
-                    <Switch IsToggled="False" Style="{StaticResource ThemeForge.Switch}" />
-                    <Label Text="Off" VerticalOptions="Center" />
-                </HorizontalStackLayout>
-            </Grid>
+                    <HorizontalStackLayout Grid.Row="1" Grid.Column="1" Spacing="6">
+                        <RadioButton
+                            IsChecked="False"
+                            GroupName="preview-radio"
+                            Style="{StaticResource ThemeForge.RadioButton}" />
+                        <Label Text="Unselected" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                </Grid>
 
-            <Slider
-                Value="0.5"
-                Minimum="0"
-                Maximum="1"
-                Style="{StaticResource ThemeForge.Slider}" />
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <HorizontalStackLayout Grid.Column="0" Spacing="6">
+                        <Switch IsToggled="True" Style="{StaticResource ThemeForge.Switch}" />
+                        <Label Text="On" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
 
-            <ProgressBar
-                Progress="0.5"
-                Style="{StaticResource ThemeForge.ProgressBar}" />
+                    <HorizontalStackLayout Grid.Column="1" Spacing="6">
+                        <Switch IsToggled="False" Style="{StaticResource ThemeForge.Switch}" />
+                        <Label Text="Off" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                </Grid>
 
-            <Picker
-                Title="Picker"
-                Style="{StaticResource ThemeForge.Picker}">
-                <Picker.Items>
-                    <x:String>Item 1</x:String>
-                    <x:String>Item 2</x:String>
-                    <x:String>Item 3</x:String>
-                </Picker.Items>
-            </Picker>
+                <Slider
+                    Value="0.5"
+                    Minimum="0"
+                    Maximum="1"
+                    Style="{StaticResource ThemeForge.Slider}" />
 
-        </VerticalStackLayout>
-    </ScrollView>
+                <ProgressBar
+                    Progress="0.5"
+                    Style="{StaticResource ThemeForge.ProgressBar}" />
+
+                <Picker
+                    Title="Picker"
+                    Style="{StaticResource ThemeForge.Picker}">
+                    <Picker.Items>
+                        <x:String>Item 1</x:String>
+                        <x:String>Item 2</x:String>
+                        <x:String>Item 3</x:String>
+                    </Picker.Items>
+                </Picker>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
 </ContentView>

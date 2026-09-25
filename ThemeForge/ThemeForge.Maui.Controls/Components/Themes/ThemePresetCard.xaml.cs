@@ -1,17 +1,15 @@
 using System.Windows.Input;
 using ThemeForge.Abstractions.Enums;
 using ThemeForge.Abstractions.Interfaces;
-using ThemeForge.Abstractions.Records.UseOfColors;
-using ThemeForge.Abstractions.Records.UseOfColors.Gradients;
+using ThemeForge.Abstractions.Records.UseOfEffects;
 using ThemeForge.Abstractions.Records.UseOfTheme;
-using ThemeForge.Maui.Helpers;
+using ThemeForge.Maui.Controls.Helpers;
 using ThemeForge.Maui.Services;
-using GradientStop = ThemeForge.Abstractions.Records.UseOfColors.Gradients.GradientStop;
 
 namespace ThemeForge.Maui.Controls.Components.Themes;
 
 /// <summary>
-/// Карточка готовой темы с локальным стилированием и overlay-действиями.
+/// Карточка готовой темы с локальным стилированием, blur-overlay и эффектами.
 /// </summary>
 public partial class ThemePresetCard : ContentView
 {
@@ -19,45 +17,45 @@ public partial class ThemePresetCard : ContentView
     /// Bindable-свойство темы.
     /// </summary>
     public static readonly BindableProperty ThemeProperty = BindableProperty.Create(
-                                                                            nameof(Theme),
-                                                                            typeof(ThemeDefinition),
-                                                                            typeof(ThemePresetCard),
-                                                                            null,
-                                                                            propertyChanged: OnThemeChanged);
+                                                                        nameof(Theme),
+                                                                        typeof(ThemeDefinition),
+                                                                        typeof(ThemePresetCard),
+                                                                        null,
+                                                                        propertyChanged: OnThemeChanged);
 
     /// <summary>
     /// Bindable-свойство режима отображения карточки.
     /// </summary>
     public static readonly BindableProperty PresentationModeProperty = BindableProperty.Create(
-                                                                            nameof(PresentationMode),
-                                                                            typeof(ThemePresentationMode),
-                                                                            typeof(ThemePresetCard),
-                                                                            ThemePresentationMode.Automatic,
-                                                                            propertyChanged: OnPresentationModeChanged);
+                                                                        nameof(PresentationMode),
+                                                                        typeof(ThemePresentationMode),
+                                                                        typeof(ThemePresetCard),
+                                                                        ThemePresentationMode.Automatic,
+                                                                        propertyChanged: OnPresentationModeChanged);
 
     /// <summary>
     /// Bindable-свойство команды применения.
     /// </summary>
     public static readonly BindableProperty ApplyCommandProperty = BindableProperty.Create(
-                                                                            nameof(ApplyCommand),
-                                                                            typeof(ICommand),
-                                                                            typeof(ThemePresetCard));
+                                                                        nameof(ApplyCommand),
+                                                                        typeof(ICommand),
+                                                                        typeof(ThemePresetCard));
 
     /// <summary>
     /// Bindable-свойство команды добавления в пресеты.
     /// </summary>
     public static readonly BindableProperty FavoriteCommandProperty = BindableProperty.Create(
-                                                                            nameof(FavoriteCommand),
-                                                                            typeof(ICommand),
-                                                                            typeof(ThemePresetCard));
+                                                                        nameof(FavoriteCommand),
+                                                                        typeof(ICommand),
+                                                                        typeof(ThemePresetCard));
 
     /// <summary>
     /// Bindable-свойство команды удаления.
     /// </summary>
     public static readonly BindableProperty DeleteCommandProperty = BindableProperty.Create(
-                                                                            nameof(DeleteCommand),
-                                                                            typeof(ICommand),
-                                                                            typeof(ThemePresetCard));
+                                                                        nameof(DeleteCommand),
+                                                                        typeof(ICommand),
+                                                                        typeof(ThemePresetCard));
 
     private bool overlayVisible;
 
@@ -134,7 +132,6 @@ public partial class ThemePresetCard : ContentView
     public ThemePresetCard()
     {
         InitializeComponent();
-
         BindingContext = this;
 
         ShowOverlayCommand = new Command(async () => await SetOverlayAsync(true));
@@ -147,7 +144,7 @@ public partial class ThemePresetCard : ContentView
         base.OnHandlerChanged();
 
         UpdateThemeResources();
-        UpdateDisplayBrush();
+        UpdateDisplay();
         UpdateTitleAndDetail();
     }
 
@@ -156,7 +153,7 @@ public partial class ThemePresetCard : ContentView
         if (bindable is ThemePresetCard card)
         {
             card.UpdateThemeResources();
-            card.UpdateDisplayBrush();
+            card.UpdateDisplay();
             card.UpdateTitleAndDetail();
         }
     }
@@ -165,7 +162,7 @@ public partial class ThemePresetCard : ContentView
     {
         if (bindable is ThemePresetCard card)
         {
-            card.UpdateDisplayBrush();
+            card.UpdateDisplay();
         }
     }
 
@@ -175,24 +172,27 @@ public partial class ThemePresetCard : ContentView
 
         if (Theme is null) return;
 
-        ThemeResourceBuilder? builder = GetService<ThemeResourceBuilder>();
+        ThemeResourceBuilder? builder = this.GetService<ThemeResourceBuilder>();
 
         if (builder is null) return;
 
         Resources.MergedDictionaries.Add(builder.Build(Theme));
     }
 
-    private void UpdateDisplayBrush()
+    private void UpdateDisplay()
     {
         if (Theme is null)
         {
-            Resources["Theme.Card.DisplayBrush"] = new SolidColorBrush(Colors.Gray);
-
+            BackgroundCanvas.DisplayBrush = null;
+            BackgroundCanvas.Effect = null;
             return;
         }
 
-        Brush brush = CreateDisplayBrush(Theme, PresentationMode);
-        Resources["Theme.Card.DisplayBrush"] = brush;
+        Brush brush = ThemeDisplayBrushFactory.CreateDisplayBrush(Theme, PresentationMode);
+        EffectSettings? effect = ThemeDisplayBrushFactory.ResolveEffect(Theme);
+
+        BackgroundCanvas.DisplayBrush = brush;
+        BackgroundCanvas.Effect = effect;
     }
 
     private void UpdateTitleAndDetail()
@@ -204,93 +204,10 @@ public partial class ThemePresetCard : ContentView
             return;
         }
 
-        IThemeNamingService? naming = GetService<IThemeNamingService>();
+        IThemeNamingService? naming = this.GetService<IThemeNamingService>();
 
         TitleLabel.Text = naming?.BuildPresetTitle(Theme) ?? Theme.Name;
         DetailLabel.Text = naming?.BuildPresetDetail(Theme) ?? Theme.Kind.ToString();
-    }
-
-    private Brush CreateDisplayBrush(ThemeDefinition theme, ThemePresentationMode mode) => mode switch
-    {
-        ThemePresentationMode.Solid => ColorConversion.ToSolidBrush(GetPrimaryHex(theme)),
-        ThemePresentationMode.Automatic or ThemePresentationMode.Animated when theme.Gradient is not null => theme.Gradient.ToBrush(),
-        ThemePresentationMode.LinearGradient => CreateSyntheticGradient(theme, GradientType.Linear).ToBrush(),
-        ThemePresentationMode.RadialGradient => CreateSyntheticGradient(theme, GradientType.Radial).ToBrush(),
-        _ when theme.Gradient is not null => theme.Gradient.ToBrush(),
-        _ => ColorConversion.ToSolidBrush(GetPrimaryHex(theme))
-    };
-
-    private static GradientTheme CreateSyntheticGradient(ThemeDefinition theme, GradientType type)
-    {
-        IReadOnlyList<string> colors = GetDisplayColors(theme);
-        List<GradientStop> stops = new (colors.Count);
-
-        for (int i = 0; i < colors.Count; i++)
-        {
-            double offset = colors.Count == 1 ? 0 : (double)i / (colors.Count - 1);
-
-            stops.Add(new GradientStop(ColorToken.FromHex(colors[i]), offset));
-        }
-
-        GradientGeometry geometry = type switch
-        {
-            GradientType.Linear => new GradientGeometry
-            {
-                AngleDegrees = 90,
-                StartPoint = new NormalizedPoint(0, 0.5),
-                EndPoint = new NormalizedPoint(1, 0.5)
-            },
-            GradientType.Radial => new GradientGeometry
-            {
-                CenterPoint = new NormalizedPoint(0.5, 0.5),
-                Radius = 0.75
-            },
-            _ => new GradientGeometry()
-        };
-
-        return new GradientTheme(type, stops) { Geometry = geometry };
-    }
-
-    private static IReadOnlyList<string> GetDisplayColors(ThemeDefinition theme)
-    {
-        if (theme.Gradient is not null && theme.Gradient.Stops.Count > 0)
-        {
-            return theme.Gradient.Stops.Select(s => s.Color.Hex).ToList();
-        }
-
-        if (theme.Solid is not null)
-        {
-            if (theme.Solid.Palette.Count > 0)
-            {
-                return theme.Solid.Palette.Select(p => p.Hex).ToList();
-            }
-
-            string baseHex = theme.Solid.BaseColor.Hex;
-
-            return
-            [
-                baseHex,
-                ColorConversion.Lighten(baseHex, 0.12),
-                ColorConversion.Darken(baseHex, 0.12)
-            ];
-        }
-
-        return ["#1976D2"];
-    }
-
-    private static string GetPrimaryHex(ThemeDefinition theme)
-    {
-        if (theme.Solid is not null)
-        {
-            return theme.Solid.BaseColor.Hex;
-        }
-
-        if (theme.Gradient is not null && theme.Gradient.Stops.Count > 0)
-        {
-            return theme.Gradient.Stops[0].Color.Hex;
-        }
-
-        return "#1976D2";
     }
 
     private async Task SetOverlayAsync(bool show)
@@ -333,7 +250,7 @@ public partial class ThemePresetCard : ContentView
         }
         else
         {
-            IThemeService? themeService = GetService<IThemeService>();
+            IThemeService? themeService = this.GetService<IThemeService>();
 
             if (themeService is not null)
             {
@@ -368,6 +285,4 @@ public partial class ThemePresetCard : ContentView
 
         await SetOverlayAsync(false);
     }
-
-    private T? GetService<T>() where T : class => this.Handler?.MauiContext?.Services.GetService<T>() ?? Application.Current?.Handler?.MauiContext?.Services.GetService<T>();
 }

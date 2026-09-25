@@ -1,12 +1,13 @@
 using ThemeForge.Abstractions.Enums;
 using ThemeForge.Abstractions.Records.UseOfTheme;
 using ThemeForge.Maui.Attached;
+using ThemeForge.Maui.Controls.Helpers;
 using ThemeForge.Maui.Services;
 
 namespace ThemeForge.Maui.Controls.Components.Preview;
 
 /// <summary>
-/// Универсальная поверхность предпросмотра интерфейса.
+/// Универсальная поверхность предпросмотра интерфейса с эффектами темы.
 /// </summary>
 public partial class ThemePreviewSurface : ContentView
 {
@@ -14,21 +15,21 @@ public partial class ThemePreviewSurface : ContentView
     /// Bindable-свойство темы предпросмотра.
     /// </summary>
     public static readonly BindableProperty ThemeProperty = BindableProperty.Create(
-                                                                    nameof(Theme),
-                                                                    typeof(ThemeDefinition),
-                                                                    typeof(ThemePreviewSurface),
-                                                                    null,
-                                                                    propertyChanged: OnThemeChanged);
+                                                                nameof(Theme),
+                                                                typeof(ThemeDefinition),
+                                                                typeof(ThemePreviewSurface),
+                                                                null,
+                                                                propertyChanged: OnThemeChanged);
 
     /// <summary>
     /// Bindable-свойство режима предпросмотра.
     /// </summary>
     public static readonly BindableProperty ModeProperty = BindableProperty.Create(
-                                                                    nameof(Mode),
-                                                                    typeof(PreviewMode),
-                                                                    typeof(ThemePreviewSurface),
-                                                                    PreviewMode.Active,
-                                                                    propertyChanged: OnModeChanged);
+                                                                nameof(Mode),
+                                                                typeof(PreviewMode),
+                                                                typeof(ThemePreviewSurface),
+                                                                PreviewMode.Active,
+                                                                propertyChanged: OnModeChanged);
 
     /// <summary>
     /// Тема, отображаемая в предпросмотре.
@@ -62,6 +63,7 @@ public partial class ThemePreviewSurface : ContentView
         if (bindable is ThemePreviewSurface surface)
         {
             surface.UpdateThemeResources();
+            surface.UpdateBackground();
         }
     }
 
@@ -76,6 +78,7 @@ public partial class ThemePreviewSurface : ContentView
     private void OnLoaded(object? sender, EventArgs e)
     {
         UpdateThemeResources();
+        UpdateBackground();
         ApplyPreviewMode();
     }
 
@@ -85,7 +88,7 @@ public partial class ThemePreviewSurface : ContentView
 
         if (Theme is null) return;
 
-        ThemeResourceBuilder? builder = GetService<ThemeResourceBuilder>();
+        ThemeResourceBuilder? builder = this.GetService<ThemeResourceBuilder>();
 
         if (builder is not null)
         {
@@ -93,7 +96,18 @@ public partial class ThemePreviewSurface : ContentView
         }
     }
 
-    private void ApplyPreviewMode() => ThemePreview.ApplyToDescendants(PreviewRoot, Mode);
+    private void UpdateBackground()
+    {
+        if (Theme is null)
+        {
+            BackgroundCanvas.DisplayBrush = null;
+            BackgroundCanvas.Effect = null;
+            return;
+        }
 
-    private T? GetService<T>() where T : class => this.Handler?.MauiContext?.Services.GetService<T>() ?? Application.Current?.Handler?.MauiContext?.Services.GetService<T>();
+        BackgroundCanvas.DisplayBrush = ThemeDisplayBrushFactory.CreateDisplayBrush(Theme, ThemePresentationMode.Automatic);
+        BackgroundCanvas.Effect = ThemeDisplayBrushFactory.ResolveEffect(Theme);
+    }
+
+    private void ApplyPreviewMode() => ThemePreview.ApplyToDescendants(PreviewRoot, Mode);
 }
