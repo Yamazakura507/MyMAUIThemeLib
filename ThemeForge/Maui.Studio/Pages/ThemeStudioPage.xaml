@@ -138,6 +138,11 @@
                             BindingContext="{Binding ComponentEditor}"
                             IsVisible="{Binding ActiveEditor, Converter={StaticResource EnumToBool}, ConverterParameter=ComponentColors}" />
 
+                        <!-- Effect editor -->
+                        <editors:EffectSettingsEditor
+                            BindingContext="{Binding EffectEditor}"
+                            IsVisible="{Binding ActiveEditor, Converter={StaticResource EnumToBool}, ConverterParameter=Effect}" />
+
                         <Label
                             Text="Выберите тему или группу настроек в дереве."
                             IsVisible="{Binding ActiveEditor, Converter={StaticResource EnumToBool}, ConverterParameter=None}"

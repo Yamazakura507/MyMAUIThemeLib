@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ThemeForge.Maui.Controls.Components.Editors.EffectSettingsEditor"
+            xmlns:editors="clr-namespace:ThemeForge.Maui.Controls.ComponentModels.Editors"
+            xmlns:hosts="clr-namespace:ThemeForge.Maui.Controls.Components.Lottie;assembly=ThemeForge.Maui.Controls"
+            x:DataType="editors:EffectSettingsEditorViewModel">
+
+        <VerticalStackLayout Spacing="8" Padding="4">
+            <Label
+            Text="Эффект"
+            FontAttributes="Bold" />
+
+            <HorizontalStackLayout Spacing="8">
+                <Label
+                Text="Включить"
+                VerticalOptions="Center" />
+                <Switch
+                IsToggled="{Binding IsEnabled, Mode=TwoWay}" />
+            </HorizontalStackLayout>
+
+            <Picker
+            Title="Тип эффекта"
+            ItemsSource="{Binding EffectKinds}"
+            SelectedItem="{Binding Kind, Mode=TwoWay}"
+            IsEnabled="{Binding IsEnabled}" />
+
+            <HorizontalStackLayout IsEnabled="{Binding IsEnabled}">
+                <Label
+                Text="Intensity"
+                WidthRequest="90"
+                VerticalOptions="Center" />
+                <Slider
+                Minimum="0"
+                Maximum="1"
+                Value="{Binding Intensity, Mode=TwoWay}"
+                WidthRequest="160" />
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout IsEnabled="{Binding IsEnabled}">
+                <Label
+                Text="Speed"
+                WidthRequest="90"
+                VerticalOptions="Center" />
+                <Slider
+                Minimum="0.1"
+                Maximum="3"
+                Value="{Binding Speed, Mode=TwoWay}"
+                WidthRequest="160" />
+            </HorizontalStackLayout>
+
+            <Border
+            Stroke="Gray"
+            StrokeThickness="1"
+            Padding="0"
+            HeightRequest="96">
+                <hosts:ThemeBackgroundHost
+                DisplayBrush="{Binding PreviewBrush}"
+                Effect="{Binding CurrentEffect}"
+                IsRunning="{Binding IsEnabled}" />
+            </Border>
+
+            <Label
+            Text="Параметры"
+            FontAttributes="Bold" />
+
+            <CollectionView
+            x:Name="ParameterList"
+            ItemsSource="{Binding Parameters}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="editors:EffectParameterViewModel">
+                        <Grid
+                        ColumnDefinitions="*,*,Auto"
+                        ColumnSpacing="6"
+                        Padding="0,4">
+                            <Entry
+                            Grid.Column="0"
+                            Text="{Binding Key, Mode=TwoWay}"
+                            Placeholder="Key" />
+                            <Entry
+                            Grid.Column="1"
+                            Text="{Binding Value, Mode=TwoWay}"
+                            Placeholder="Value" />
+                            <Button
+                            Grid.Column="2"
+                            Text="X"
+                            Command="{Binding RemoveCommand}" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Grid
+            ColumnDefinitions="*,Auto"
+            ColumnSpacing="6">
+                <Picker
+                Grid.Column="0"
+                Title="Параметр"
+                ItemsSource="{Binding Suggestions}"
+                SelectedItem="{Binding SelectedSuggestion, Mode=TwoWay}" />
+                <Button
+                Grid.Column="1"
+                Text="Добавить"
+                Command="{Binding AddSelectedSuggestionCommand}" />
+            </Grid>
+        </VerticalStackLayout>
+    </ContentView>

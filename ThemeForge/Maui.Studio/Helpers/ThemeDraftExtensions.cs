@@ -1,5 +1,6 @@
 ﻿using ThemeForge.Abstractions.Enums;
 using ThemeForge.Abstractions.Helpers;
+using ThemeForge.Abstractions.Records.UseOfEffects;
 using ThemeForge.Abstractions.Records.UseOfGeometry;
 using ThemeForge.Abstractions.Records.UseOfTheme;
 using ThemeForge.Abstractions.Records.UseOfTypograhy;
@@ -69,6 +70,22 @@ namespace ThemeForge.Maui.Studio.Helpers
             string key = ThemeComponentKey.Create(controlType, state);
 
             return theme.Components.TryGetValue(key, out ComponentTheme? component) ? component : new ComponentTheme(controlType) { State = state };
+        }
+
+        /// <summary>
+        /// Обновляет эффект конкретного компонента, сохраняя остальные поля.
+        /// </summary>
+        public static ThemeDefinition WithComponentEffects(this ThemeDefinition theme, string controlType, ComponentState state, EffectSettings effects)
+        {
+            ComponentTheme existing = theme.GetComponentTheme(controlType, state);
+            ComponentTheme updated = existing with
+            {
+                ControlType = controlType,
+                State = state,
+                Effects = effects
+            };
+
+            return theme.WithComponent(controlType, state, updated);
         }
     }
 }

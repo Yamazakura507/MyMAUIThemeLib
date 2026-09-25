@@ -33,6 +33,11 @@
         /// <summary>
         /// Редактор цветов конкретного компонента.
         /// </summary>
-        ComponentColors
+        ComponentColors,
+
+        /// <summary>
+        /// Редактор эффектов.
+        /// </summary>
+        Effect
     }
 }

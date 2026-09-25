@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using ThemeForge.Abstractions.Interfaces;
 using ThemeForge.Abstractions.Records.UseOfTheme;
 
@@ -26,6 +28,8 @@ namespace ThemeForge.Maui.Controls.ComponentModels.Editors
         public GradientThemeEditorViewModel(IThemeFactory themeFactory)
         {
             this.themeFactory = themeFactory;
+
+            AttachNestedNotifications();
         }
 
         /// <summary>
@@ -35,14 +39,48 @@ namespace ThemeForge.Maui.Controls.ComponentModels.Editors
         private async Task BuildAsync(CancellationToken cancellationToken)
         {
             GradientTheme gradient = Settings.BuildGradientTheme();
+
             List<string> hexes = gradient.Stops.Select(s => s.Color.Hex).ToList();
 
-            PreviewTheme = await themeFactory.CreateGradientAsync(
-                gradient.Type,
-                hexes,
-                gradient.Geometry,
-                gradient.BackgroundEffect,
-                cancellationToken: cancellationToken);
+            PreviewTheme = await themeFactory.CreateGradientAsync(gradient.Type, hexes, gradient.Geometry, gradient.BackgroundEffect, cancellationToken: cancellationToken);
+        }
+
+        private void AttachNestedNotifications()
+        {
+            Settings.PropertyChanged += OnNestedPropertyChanged;
+            Settings.EffectEditor.PropertyChanged += OnNestedPropertyChanged;
+            Settings.Stops.CollectionChanged += OnStopsCollectionChanged;
+
+            foreach (GradientStopViewModel stop in Settings.Stops)
+            {
+                stop.PropertyChanged += OnNestedPropertyChanged;
+            }
+        }
+
+        private void OnStopsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems is not null)
+            {
+                foreach (INotifyPropertyChanged item in e.NewItems)
+                {
+                    item.PropertyChanged += OnNestedPropertyChanged;
+                }
+            }
+
+            if (e.OldItems is not null)
+            {
+                foreach (INotifyPropertyChanged item in e.OldItems)
+                {
+                    item.PropertyChanged -= OnNestedPropertyChanged;
+                }
+            }
+
+            OnPropertyChanged(nameof(Settings));
+        }
+
+        private void OnNestedPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            OnPropertyChanged(nameof(Settings));
         }
     }
 }

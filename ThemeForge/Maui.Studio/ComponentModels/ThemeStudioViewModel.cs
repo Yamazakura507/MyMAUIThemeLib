@@ -5,6 +5,7 @@ using ThemeForge.Abstractions.Enums;
 using ThemeForge.Abstractions.EventArgs;
 using ThemeForge.Abstractions.Interfaces;
 using ThemeForge.Abstractions.Records;
+using ThemeForge.Abstractions.Records.UseOfEffects;
 using ThemeForge.Abstractions.Records.UseOfGeometry;
 using ThemeForge.Abstractions.Records.UseOfTheme;
 using ThemeForge.Abstractions.Records.UseOfTypograhy;
@@ -95,6 +96,11 @@ namespace ThemeForge.Maui.Studio.ComponentModels
         public ComponentThemeEditorViewModel ComponentEditor { get; }
 
         /// <summary>
+        /// Редактор эффектов.
+        /// </summary>
+        public EffectSettingsEditorViewModel EffectEditor { get; }
+
+        /// <summary>
         /// Доступные режимы предпросмотра.
         /// </summary>
         public Array PreviewModes { get; } = Enum.GetValues(typeof(PreviewMode));
@@ -117,7 +123,8 @@ namespace ThemeForge.Maui.Studio.ComponentModels
             GradientThemeEditorViewModel gradientEditor,
             TypographyEditorViewModel typographyEditor,
             GeometryEditorViewModel geometryEditor,
-            ComponentThemeEditorViewModel componentEditor)
+            ComponentThemeEditorViewModel componentEditor,
+            EffectSettingsEditorViewModel effectEditor)
         {
             this.themeService = themeService;
             this.themeRepository = themeRepository;
@@ -130,6 +137,7 @@ namespace ThemeForge.Maui.Studio.ComponentModels
             TypographyEditor = typographyEditor;
             GeometryEditor = geometryEditor;
             ComponentEditor = componentEditor;
+            EffectEditor = effectEditor;
 
             ReadyTree = new ThemeTreeViewModel();
             CustomTree = new ThemeTreeViewModel();
@@ -146,6 +154,7 @@ namespace ThemeForge.Maui.Studio.ComponentModels
             TypographyEditor.PropertyChanged += OnEditorPropertyChanged;
             GeometryEditor.PropertyChanged += OnEditorPropertyChanged;
             ComponentEditor.PropertyChanged += OnEditorPropertyChanged;
+            EffectEditor.PropertyChanged += OnEditorPropertyChanged;
         }
 
         partial void OnModeChanged(StudioMode value)
@@ -420,6 +429,7 @@ namespace ThemeForge.Maui.Studio.ComponentModels
                 ThemeSettingGroup.Typography => EditorKind.Typography,
                 ThemeSettingGroup.Geometry => EditorKind.Geometry,
                 ThemeSettingGroup.Colors => EditorKind.ComponentColors,
+                ThemeSettingGroup.Effects => EditorKind.Effect,
                 _ => EditorKind.None
             };
 
@@ -466,6 +476,16 @@ namespace ThemeForge.Maui.Studio.ComponentModels
                 Detail = "Глобальные отступы и скругления",
                 Kind = TreeNodeKind.SettingGroup,
                 Group = ThemeSettingGroup.Geometry,
+                Payload = "Global",
+                IsExpanded = false
+            });
+
+            settings.Children.Add(new ThemeTreeNodeViewModel
+            {
+                Title = "Эффекты",
+                Detail = "Глобальные визуальные эффекты",
+                Kind = TreeNodeKind.SettingGroup,
+                Group = ThemeSettingGroup.Effects,
                 Payload = "Global",
                 IsExpanded = false
             });
@@ -537,6 +557,17 @@ namespace ThemeForge.Maui.Studio.ComponentModels
                         if (!string.IsNullOrWhiteSpace(selectedControlType))
                         {
                             ComponentEditor.LoadFrom(draftTheme, selectedControlType, selectedState, selectedDescriptor);
+                        }
+                        break;
+                    case EditorKind.Effect:
+                        if (isGlobalEditor)
+                        {
+                            EffectEditor.LoadFrom(draftTheme.GlobalEffect);
+                        }
+                        else if (!string.IsNullOrWhiteSpace(selectedControlType))
+                        {
+                            ComponentTheme component = draftTheme.GetComponentTheme(selectedControlType, selectedState);
+                            EffectEditor.LoadFrom(component.Effects);
                         }
                         break;
                 }
@@ -620,6 +651,22 @@ namespace ThemeForge.Maui.Studio.ComponentModels
                         updated = draftTheme.WithComponent(selectedControlType, selectedState, component);
                     }
                     break;
+                case EditorKind.Effect:
+                    EffectSettings effect = EffectEditor.BuildEffectSettings();
+
+                    if (isGlobalEditor)
+                    {
+                        updated = draftTheme with
+                        {
+                            GlobalEffect = effect,
+                            UpdatedUtc = DateTimeOffset.UtcNow
+                        };
+                    }
+                    else if (!string.IsNullOrWhiteSpace(selectedControlType))
+                    {
+                        updated = draftTheme.WithComponentEffects(selectedControlType, selectedState, effect);
+                    }
+                    break;
             }
 
             if (updated is not null)
@@ -632,16 +679,9 @@ namespace ThemeForge.Maui.Studio.ComponentModels
 
         private static bool IsGradientEditorProperty(string? propertyName)
         {
-            return propertyName is nameof(GradientSettingsEditorViewModel.Type)
-                or nameof(GradientSettingsEditorViewModel.ColorCount)
-                or nameof(GradientSettingsEditorViewModel.AngleDegrees)
-                or nameof(GradientSettingsEditorViewModel.CenterX)
-                or nameof(GradientSettingsEditorViewModel.CenterY)
-                or nameof(GradientSettingsEditorViewModel.Radius)
-                or nameof(GradientSettingsEditorViewModel.EffectEnabled)
-                or nameof(GradientSettingsEditorViewModel.EffectKind)
-                or nameof(GradientSettingsEditorViewModel.EffectIntensity)
-                or nameof(GradientSettingsEditorViewModel.EffectSpeed);
+            return propertyName is null
+                or nameof(GradientThemeEditorViewModel.Settings)
+                or nameof(GradientThemeEditorViewModel.PreviewTheme);
         }
 
         private async void OnThemeServiceDraftChanged(object? sender, ThemeChangedEventArgs e)

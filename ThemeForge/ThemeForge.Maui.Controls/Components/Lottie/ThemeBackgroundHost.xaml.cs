@@ -12,11 +12,11 @@ public partial class ThemeBackgroundHost : ContentView
     /// Bindable-свойство отображаемого brush.
     /// </summary>
     public static readonly BindableProperty DisplayBrushProperty = BindableProperty.Create(
-                                                                    nameof(DisplayBrush),
-                                                                    typeof(Brush),
-                                                                    typeof(ThemeBackgroundHost),
-                                                                    null,
-                                                                    propertyChanged: OnDisplayBrushChanged);
+                                                                        nameof(DisplayBrush),
+                                                                        typeof(Brush),
+                                                                        typeof(ThemeBackgroundHost),
+                                                                        null,
+                                                                        propertyChanged: OnDisplayBrushChanged);
 
     /// <summary>
     /// Bindable-свойство эффекта.
@@ -32,11 +32,11 @@ public partial class ThemeBackgroundHost : ContentView
     /// Bindable-свойство запуска анимации.
     /// </summary>
     public static readonly BindableProperty IsRunningProperty = BindableProperty.Create(
-                                                                    nameof(IsRunning),
-                                                                    typeof(bool),
-                                                                    typeof(ThemeBackgroundHost),
-                                                                    true,
-                                                                    propertyChanged: OnIsRunningChanged);
+                                                                        nameof(IsRunning),
+                                                                        typeof(bool),
+                                                                        typeof(ThemeBackgroundHost),
+                                                                        true,
+                                                                        propertyChanged: OnIsRunningChanged);
 
     /// <summary>
     /// Отображаемый фон.
@@ -71,6 +71,8 @@ public partial class ThemeBackgroundHost : ContentView
     public ThemeBackgroundHost()
     {
         InitializeComponent();
+
+        LottieHost.SourceAvailabilityChanged += OnLottieSourceAvailabilityChanged;
     }
 
     /// <inheritdoc />
@@ -105,6 +107,8 @@ public partial class ThemeBackgroundHost : ContentView
         }
     }
 
+    private void OnLottieSourceAvailabilityChanged(object? sender, EventArgs e) => UpdateRouting();
+
     private void UpdateRouting()
     {
         SkiaCanvas.DisplayBrush = DisplayBrush;
@@ -123,7 +127,10 @@ public partial class ThemeBackgroundHost : ContentView
             else
             {
                 LottieHost.IsVisible = false;
-                SkiaCanvas.Effect = lottieEffect with { Kind = EffectKind.MovingColors };
+                SkiaCanvas.Effect = lottieEffect with
+                {
+                    Kind = EffectKind.MovingColors
+                };
             }
 
             return;

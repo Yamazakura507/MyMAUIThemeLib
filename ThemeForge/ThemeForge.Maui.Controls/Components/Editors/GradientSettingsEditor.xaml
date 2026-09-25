@@ -2,9 +2,10 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ThemeForge.Maui.Controls.Components.Editors.GradientSettingsEditor"
-             xmlns:editors="clr-namespace:ThemeForge.Maui.Controls.ComponentModels.Editors"
+             xmlns:editors="clr-namespace:ThemeForge.Maui.Controls.Components.Editors"
+             xmlns:editorsModel="clr-namespace:ThemeForge.Maui.Controls.ComponentModels.Editors"
              xmlns:helpers="clr-namespace:ThemeForge.Maui.Controls.Helpers"
-             x:DataType="editors:GradientSettingsEditorViewModel">
+             x:DataType="editorsModel:GradientSettingsEditorViewModel">
 
     <VerticalStackLayout Spacing="8">
         <Picker
@@ -23,7 +24,7 @@
 
         <CollectionView ItemsSource="{Binding Stops}">
             <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="editors:GradientStopViewModel">
+                <DataTemplate x:DataType="editorsModel:GradientStopViewModel">
                     <Grid ColumnDefinitions="*,120" Padding="0,4">
                         <Entry
                             Grid.Column="0"
@@ -69,71 +70,7 @@
                 WidthRequest="180" />
         </HorizontalStackLayout>
 
-        <Label Text="Эффект" FontAttributes="Bold" />
-
-        <HorizontalStackLayout>
-            <Label Text="Включить" VerticalOptions="Center" />
-            <Switch IsToggled="{Binding EffectEnabled, Mode=TwoWay}" />
-        </HorizontalStackLayout>
-
-        <Picker
-            Title="Тип эффекта"
-            ItemsSource="{Binding EffectKinds}"
-            SelectedItem="{Binding EffectKind, Mode=TwoWay}"
-            IsEnabled="{Binding EffectEnabled}" />
-
-        <HorizontalStackLayout IsEnabled="{Binding EffectEnabled}">
-            <Label Text="Intensity" VerticalOptions="Center" />
-            <Slider
-                Minimum="0"
-                Maximum="1"
-                Value="{Binding EffectIntensity, Mode=TwoWay}"
-                WidthRequest="140" />
-        </HorizontalStackLayout>
-
-        <HorizontalStackLayout IsEnabled="{Binding EffectEnabled}">
-            <Label Text="Speed" VerticalOptions="Center" />
-            <Slider
-                Minimum="0.1"
-                Maximum="3"
-                Value="{Binding EffectSpeed, Mode=TwoWay}"
-                WidthRequest="140" />
-        </HorizontalStackLayout>
-
-        <VerticalStackLayout
-            Spacing="6"
-            IsVisible="{Binding IsLottieEffect}"
-            IsEnabled="{Binding EffectEnabled}">
-
-            <Label Text="Lottie" FontAttributes="Bold" />
-
-            <Label Text="Локальный asset" />
-            <Entry
-                Placeholder="Animations/loading.json"
-                Text="{Binding LottieAssetName, Mode=TwoWay}" />
-
-            <Label Text="URL" />
-            <Entry
-                Placeholder="https://example.com/animation.json"
-                Text="{Binding LottieUrl, Mode=TwoWay}" />
-
-            <HorizontalStackLayout Spacing="12">
-                <CheckBox IsChecked="{Binding LottieLoop, Mode=TwoWay}" />
-                <Label Text="Loop" VerticalOptions="Center" />
-
-                <CheckBox IsChecked="{Binding LottieAutoPlay, Mode=TwoWay}" />
-                <Label Text="AutoPlay" VerticalOptions="Center" />
-            </HorizontalStackLayout>
-
-            <Label Text="Tint color" />
-            <Entry
-                Placeholder="#FFFFFF"
-                Text="{Binding LottieTintColorHex, Mode=TwoWay}" />
-
-            <Label Text="Scale mode" />
-            <Picker
-                ItemsSource="{Binding LottieScaleModes}"
-                SelectedItem="{Binding LottieScaleMode, Mode=TwoWay}" />
-        </VerticalStackLayout>
+        <editors:EffectSettingsEditor
+            BindingContext="{Binding EffectEditor}" />
     </VerticalStackLayout>
 </ContentView>

@@ -27,6 +27,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Components\Editors\EffectSettingsEditor.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Components\Editors\GeometryEditor.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

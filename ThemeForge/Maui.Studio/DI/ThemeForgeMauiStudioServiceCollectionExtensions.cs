@@ -23,7 +23,7 @@ namespace ThemeForge.Maui.Studio.DI
             services.AddSingleton<TypographyEditorViewModel>();
             services.AddSingleton<GeometryEditorViewModel>();
             services.AddSingleton<ComponentThemeEditorViewModel>();
-
+            services.AddSingleton<EffectSettingsEditorViewModel>();
             services.AddSingleton<ThemeStudioViewModel>();
             services.AddTransient<ThemeStudioPage>();
 

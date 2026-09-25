@@ -1,7 +1,9 @@
 ﻿using SkiaSharp;
 using SkiaSharp.Views.Maui;
 using SkiaSharp.Views.Maui.Controls;
+using System.Globalization;
 using ThemeForge.Abstractions.Enums;
+using ThemeForge.Abstractions.Knowledge;
 using ThemeForge.Abstractions.Records.UseOfEffects;
 using ThemeForge.Maui.Controls.Helpers;
 
@@ -186,15 +188,7 @@ namespace ThemeForge.Maui.Controls.ComponentModels.Skia
 
             if (effect is { IsEnabled: true, Kind: EffectKind.MovingColors })
             {
-                double speed = Math.Clamp(effect.Speed, 0.1, 10.0);
-                double intensity = Math.Clamp(effect.Intensity, 0.0, 1.0);
-
-                float dx = (float)((progress * speed * 0.35 * intensity) % 1.0) * size.Width;
-                float dy = (float)((progress * speed * 0.18 * intensity) % 1.0) * size.Height;
-
-                using SKShader? transformedShader = baseShader.WithLocalMatrix(SKMatrix.CreateTranslation(dx, dy));
-
-                basePaint.Shader = transformedShader;
+                basePaint.Shader = ApplyMovingColors(baseShader, size, effect);
             }
 
             canvas.DrawRect(rect, basePaint);
@@ -204,7 +198,7 @@ namespace ThemeForge.Maui.Controls.ComponentModels.Skia
             switch (effect.Kind)
             {
                 case EffectKind.Wave:
-                    DrawWave(canvas, rect, size, baseShader, effect);
+                    DrawWave(canvas, size, baseShader, effect);
                     break;
 
                 case EffectKind.Shimmer:
@@ -225,12 +219,39 @@ namespace ThemeForge.Maui.Controls.ComponentModels.Skia
             }
         }
 
-        private void DrawWave(SKCanvas canvas, SKRect rect, SKSize size, SKShader shader, EffectSettings effect)
+        private SKShader? ApplyMovingColors( SKShader shader, SKSize size, EffectSettings effect)
         {
+            IReadOnlyDictionary<string,string> parameters = effect.Parameters;
+
+            double speed = Math.Clamp(effect.Speed, 0.1, 10.0);
+            double intensity = Math.Clamp(effect.Intensity, 0.0, 1.0);
+
+            var directionX = GetFloat(parameters, KnownEffectParameters.MovingColorsDirectionX, 0.35f);
+            var directionY = GetFloat(parameters, KnownEffectParameters.MovingColorsDirectionY, 0.18f);
+
+            directionX = Math.Clamp(directionX, -10.0f, 10.0f);
+            directionY = Math.Clamp(directionY, -10.0f, 10.0f);
+
+            float dx = WrapFraction(progress * speed * directionX * intensity) * size.Width;
+            float dy = WrapFraction(progress * speed * directionY * intensity) * size.Height;
+
+            using SKShader? transformedShader = shader.WithLocalMatrix(SKMatrix.CreateTranslation(dx, dy));
+
+            return transformedShader;
+        }
+
+        private void DrawWave(SKCanvas canvas, SKSize size, SKShader shader, EffectSettings effect)
+        {
+            IReadOnlyDictionary<string, string> parameters = effect.Parameters;
+
             double intensity = Math.Clamp(effect.Intensity, 0.0, 1.0);
             double speed = Math.Clamp(effect.Speed, 0.1, 10.0);
 
-            using var paint = new SKPaint
+            int bands = Math.Clamp(GetInt(parameters, KnownEffectParameters.WaveBands, 4), 1, 12);
+            float frequencyMultiplier = Math.Clamp(GetFloat(parameters, KnownEffectParameters.WaveFrequency, 1.0f), 0.1f, 10.0f);
+            float amplitudeMultiplier = Math.Clamp(GetFloat(parameters, KnownEffectParameters.WaveAmplitude, 1.0f), 0.0f, 5.0f);
+
+            using SKPaint paint = new ()
             {
                 IsAntialias = true,
                 Style = SKPaintStyle.Stroke,
@@ -239,15 +260,13 @@ namespace ThemeForge.Maui.Controls.ComponentModels.Skia
 
             paint.Color = paint.Color.WithAlpha((byte)Math.Clamp(90.0 * intensity, 0.0, 255.0));
 
-            int bands = 4;
-
             for (int band = 0; band < bands; band++)
             {
                 using SKPathBuilder builder = new();
 
-                float baseY = size.Height * (0.22f + band * 0.18f);
-                float amplitude = (float)(size.Height * 0.07f * intensity * (1f + band * 0.12f));
-                float frequency = 1.5f + band * 0.65f;
+                float baseY = size.Height * (0.22f + band * (0.78f / Math.Max(1, bands - 1)));
+                float amplitude = (float)(size.Height * 0.07f * intensity * amplitudeMultiplier * (1f + band * 0.12f));
+                float frequency = (1.5f + band * 0.65f) * frequencyMultiplier;
                 float phase = (float)(progress * Math.PI * 2.0 * speed + band * 0.8);
 
                 paint.StrokeWidth = 2f + band * 1.5f;
@@ -277,19 +296,35 @@ namespace ThemeForge.Maui.Controls.ComponentModels.Skia
 
         private void DrawShimmer(SKCanvas canvas, SKRect rect, SKSize size, EffectSettings effect)
         {
+            IReadOnlyDictionary<string, string> parameters = effect.Parameters;
+
             double intensity = Math.Clamp(effect.Intensity, 0.0, 1.0);
             double speed = Math.Clamp(effect.Speed, 0.1, 10.0);
 
+            float angleDegrees = GetFloat(parameters, KnownEffectParameters.ShimmerAngleDegrees, 45.0f);
+            float widthRatio = Math.Clamp(GetFloat(parameters, KnownEffectParameters.ShimmerWidthRatio, 0.7f), 0.05f, 3.0f);
+            float opacityMultiplier = Math.Clamp(GetFloat(parameters, KnownEffectParameters.ShimmerOpacityMultiplier, 1.0f), 0.0f, 5.0f);
+
+            double radians = angleDegrees * Math.PI / 180.0;
+            float dx = (float)Math.Cos(radians);
+            float dy = (float)Math.Sin(radians);
+
+            float maxLength = Math.Max(size.Width, size.Height);
+            float halfLength = maxLength * widthRatio * 0.5f;
+
+            SKPoint center = new (size.Width / 2f, size.Height / 2f);
+
             float shift = (float)((progress * speed) % 2.0) - 0.5f;
+            float offset = shift * maxLength;
 
-            SKPoint start = new (size.Width * (shift - 0.35f), -size.Height * 0.25f);
-            SKPoint end = new (size.Width * (shift + 0.35f), size.Height * 1.25f);
+            SKPoint start = new (center.X + dx * (-halfLength + offset), center.Y + dy * (-halfLength + offset));
+            SKPoint end = new (center.X + dx * (halfLength + offset), center.Y + dy * (halfLength + offset));
 
-            byte peakAlpha = (byte)Math.Clamp(150.0 * intensity, 0.0, 255.0);
-            byte softAlpha = (byte)Math.Clamp(70.0 * intensity, 0.0, 255.0);
+            byte peakAlpha = (byte)Math.Clamp(150.0 * intensity * opacityMultiplier, 0.0, 255.0);
+            byte softAlpha = (byte)Math.Clamp(70.0 * intensity * opacityMultiplier, 0.0, 255.0);
 
             using SKShader shimmerShader = SKShader.CreateLinearGradient(
-                start,end,
+                start, end,
                 [
                     new SKColor(255, 255, 255, 0),
                     new SKColor(255, 255, 255, softAlpha),
@@ -297,8 +332,7 @@ namespace ThemeForge.Maui.Controls.ComponentModels.Skia
                     new SKColor(255, 255, 255, softAlpha),
                     new SKColor(255, 255, 255, 0)
                 ],
-                [0f, 0.35f, 0.5f, 0.65f, 1f],
-                SKShaderTileMode.Clamp);
+                [0f, 0.35f, 0.5f, 0.65f, 1f], SKShaderTileMode.Clamp);
 
             using SKPaint paint = new ()
             {
@@ -312,17 +346,19 @@ namespace ThemeForge.Maui.Controls.ComponentModels.Skia
 
         private void DrawNoise(SKCanvas canvas, SKRect rect, EffectSettings effect)
         {
+            IReadOnlyDictionary<string,string> parameters = effect.Parameters;
+
             double intensity = Math.Clamp(effect.Intensity, 0.0, 1.0);
             double speed = Math.Clamp(effect.Speed, 0.1, 10.0);
 
-            float frequency = 0.015f + (float)intensity * 0.08f;
+            int octaves = Math.Clamp(GetInt(parameters, KnownEffectParameters.NoiseOctaves, 3), 1, 8);
+            float frequencyMultiplier = Math.Clamp(GetFloat(parameters, KnownEffectParameters.NoiseFrequency, 1.0f), 0.1f, 10.0f);
+            float contrast = Math.Clamp(GetFloat(parameters, KnownEffectParameters.NoiseContrast, 1.0f), 0.0f, 5.0f);
+
+            float frequency = (0.015f + (float)intensity * 0.08f) * frequencyMultiplier;
             float seed = (float)(progress * 120.0 * speed);
 
-            using var noiseShader = SKShader.CreatePerlinNoiseFractalNoise(
-                frequency,
-                frequency,
-                3,
-                seed);
+            using SKShader noiseShader = SKShader.CreatePerlinNoiseFractalNoise(frequency,frequency, octaves, seed);
 
             using SKPaint paint = new ()
             {
@@ -331,9 +367,41 @@ namespace ThemeForge.Maui.Controls.ComponentModels.Skia
                 IsAntialias = true
             };
 
-            paint.Color = paint.Color.WithAlpha((byte)Math.Clamp(70.0 * intensity, 0.0, 255.0));
+            paint.Color = paint.Color.WithAlpha((byte)Math.Clamp(70.0 * intensity * contrast, 0.0, 255.0));
 
             canvas.DrawRect(rect, paint);
+        }
+
+        private static float WrapFraction(double value)
+        {
+            double wrapped = value % 1.0;
+
+            if (wrapped < 0)
+            {
+                wrapped += 1.0;
+            }
+
+            return (float)wrapped;
+        }
+
+        private static float GetFloat(IReadOnlyDictionary<string, string>? parameters, string key, float defaultValue)
+        {
+            if (parameters is null || !parameters.TryGetValue(key, out string? raw) || string.IsNullOrWhiteSpace(raw))
+            {
+                return defaultValue;
+            }
+
+            return float.TryParse(raw, NumberStyles.Float, CultureInfo.InvariantCulture, out float value) ? value : defaultValue;
+        }
+
+        private static int GetInt(IReadOnlyDictionary<string, string>? parameters, string key, int defaultValue)
+        {
+            if (parameters is null || !parameters.TryGetValue(key, out string? raw) || string.IsNullOrWhiteSpace(raw))
+            {
+                return defaultValue;
+            }
+
+            return int.TryParse(raw, NumberStyles.Integer, CultureInfo.InvariantCulture, out int value) ? value : defaultValue;
         }
     }
 }

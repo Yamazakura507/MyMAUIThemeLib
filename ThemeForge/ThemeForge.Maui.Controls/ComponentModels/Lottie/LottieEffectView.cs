@@ -62,6 +62,11 @@ namespace ThemeForge.Maui.Controls.ComponentModels.Lottie
         public bool HasSource => hasSource;
 
         /// <summary>
+        /// Происходит, когда меняется доступность Lottie-источника.
+        /// </summary>
+        public event EventHandler? SourceAvailabilityChanged;
+
+        /// <summary>
         /// Создает Lottie-хост.
         /// </summary>
         public LottieEffectView()
@@ -141,7 +146,7 @@ namespace ThemeForge.Maui.Controls.ComponentModels.Lottie
 
         private void ApplyEffect()
         {
-            hasSource = false;
+            SetHasSource(false);
 
             if (nativeView is null || Effect is not { IsEnabled: true, Kind: EffectKind.Lottie } effect)
             {
@@ -157,7 +162,7 @@ namespace ThemeForge.Maui.Controls.ComponentModels.Lottie
                 return;
             }
 
-            hasSource = true;
+            SetHasSource(true);
             IsVisible = true;
 
             ApplyLoop(effect);
@@ -589,6 +594,14 @@ namespace ThemeForge.Maui.Controls.ComponentModels.Lottie
             value = raw;
 
             return true;
+        }
+
+        private void SetHasSource(bool value)
+        {
+            if (hasSource == value) return;
+
+            hasSource = value;
+            SourceAvailabilityChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private static string GetString(IReadOnlyDictionary<string, string> parameters, string key, string defaultValue) => 
