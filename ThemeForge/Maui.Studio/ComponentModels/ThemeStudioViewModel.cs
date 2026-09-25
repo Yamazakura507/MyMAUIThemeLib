@@ -632,16 +632,16 @@ namespace ThemeForge.Maui.Studio.ComponentModels
 
         private static bool IsGradientEditorProperty(string? propertyName)
         {
-            return propertyName is nameof(GradientThemeEditorViewModel.Type)
-                or nameof(GradientThemeEditorViewModel.ColorCount)
-                or nameof(GradientThemeEditorViewModel.AngleDegrees)
-                or nameof(GradientThemeEditorViewModel.CenterX)
-                or nameof(GradientThemeEditorViewModel.CenterY)
-                or nameof(GradientThemeEditorViewModel.Radius)
-                or nameof(GradientThemeEditorViewModel.EffectEnabled)
-                or nameof(GradientThemeEditorViewModel.EffectKind)
-                or nameof(GradientThemeEditorViewModel.EffectIntensity)
-                or nameof(GradientThemeEditorViewModel.EffectSpeed);
+            return propertyName is nameof(GradientSettingsEditorViewModel.Type)
+                or nameof(GradientSettingsEditorViewModel.ColorCount)
+                or nameof(GradientSettingsEditorViewModel.AngleDegrees)
+                or nameof(GradientSettingsEditorViewModel.CenterX)
+                or nameof(GradientSettingsEditorViewModel.CenterY)
+                or nameof(GradientSettingsEditorViewModel.Radius)
+                or nameof(GradientSettingsEditorViewModel.EffectEnabled)
+                or nameof(GradientSettingsEditorViewModel.EffectKind)
+                or nameof(GradientSettingsEditorViewModel.EffectIntensity)
+                or nameof(GradientSettingsEditorViewModel.EffectSpeed);
         }
 
         private async void OnThemeServiceDraftChanged(object? sender, ThemeChangedEventArgs e)
