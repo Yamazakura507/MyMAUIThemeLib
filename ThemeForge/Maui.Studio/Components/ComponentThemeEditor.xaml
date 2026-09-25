@@ -2,44 +2,91 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ThemeForge.Maui.Studio.Components.ComponentThemeEditor"
-             xmlns:editors="clr-namespace:ThemeForge.Maui.Studio.ComponentModels.Editors"
+             xmlns:studioEditors="clr-namespace:ThemeForge.Maui.Studio.ComponentModels.Editors"
+             xmlns:editors="clr-namespace:ThemeForge.Maui.Controls.Components.Editors;assembly=ThemeForge.Maui.Controls"
              xmlns:mauiConv="clr-namespace:ThemeForge.Maui.Converters;assembly=ThemeForge.Maui"
-             x:DataType="editors:ComponentThemeEditorViewModel">
+             x:DataType="studioEditors:ComponentThemeEditorViewModel">
     <ContentView.Resources>
         <mauiConv:HexToColorConverter x:Key="HexToColor" />
     </ContentView.Resources>
 
-    <VerticalStackLayout Spacing="8" Padding="8">
-        <Label
-            Text="{Binding Title}"
-            FontAttributes="Bold" />
-
-        <Label Text="Foreground" />
-        <Entry
-            Text="{Binding ForegroundHex, Mode=TwoWay}"
-            Placeholder="#RRGGBB" />
-
-        <Label Text="Background" />
-        <Entry
-            Text="{Binding BackgroundHex, Mode=TwoWay}"
-            Placeholder="#RRGGBB" />
-
-        <Label Text="Border" />
-        <Entry
-            Text="{Binding BorderHex, Mode=TwoWay}"
-            Placeholder="#RRGGBB" />
-
-        <Border
-            Stroke="{Binding BorderHex, Converter={StaticResource HexToColor}}"
-            BackgroundColor="{Binding BackgroundHex, Converter={StaticResource HexToColor}}"
-            StrokeThickness="1"
-            Padding="12"
-            HeightRequest="56">
+    <ScrollView>
+        <VerticalStackLayout Spacing="10" Padding="8">
             <Label
-                Text="Sample"
-                TextColor="{Binding ForegroundHex, Converter={StaticResource HexToColor}}"
-                VerticalOptions="Center"
-                HorizontalOptions="Center" />
-        </Border>
-    </VerticalStackLayout>
+                Text="{Binding Title}"
+                FontAttributes="Bold" />
+
+            <Label Text="Basic colors" FontAttributes="Bold" />
+
+            <Label Text="Foreground" />
+            <Entry
+                Text="{Binding ForegroundHex, Mode=TwoWay}"
+                Placeholder="#RRGGBB" />
+
+            <Label Text="Background" />
+            <Entry
+                Text="{Binding BackgroundHex, Mode=TwoWay}"
+                Placeholder="#RRGGBB" />
+
+            <Label Text="Border" />
+            <Entry
+                Text="{Binding BorderHex, Mode=TwoWay}"
+                Placeholder="#RRGGBB" />
+
+            <Border
+                Stroke="{Binding BorderHex, Converter={StaticResource HexToColor}}"
+                BackgroundColor="{Binding BackgroundHex, Converter={StaticResource HexToColor}}"
+                StrokeThickness="1"
+                Padding="12"
+                HeightRequest="56">
+                <Label
+                    Text="Sample"
+                    TextColor="{Binding ForegroundHex, Converter={StaticResource HexToColor}}"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center" />
+            </Border>
+
+            <HorizontalStackLayout
+                IsVisible="{Binding SupportsGradientBackground}"
+                Spacing="8">
+                <Label Text="Gradient background" VerticalOptions="Center" />
+                <Switch IsToggled="{Binding UseGradientBackground, Mode=TwoWay}" />
+            </HorizontalStackLayout>
+
+            <editors:GradientSettingsEditor
+                BindingContext="{Binding GradientSettings}"
+                IsVisible="{Binding UseGradientBackground}" />
+
+            <Label Text="Named colors" FontAttributes="Bold" />
+
+            <CollectionView ItemsSource="{Binding NamedColors}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="studioEditors:NamedColorViewModel">
+                        <Grid
+                            ColumnDefinitions="*,*,Auto"
+                            ColumnSpacing="6"
+                            Padding="0,4">
+                            <Entry
+                                Grid.Column="0"
+                                Text="{Binding Key, Mode=TwoWay}"
+                                Placeholder="Key" />
+                            <Entry
+                                Grid.Column="1"
+                                Text="{Binding Hex, Mode=TwoWay}"
+                                Placeholder="#RRGGBB" />
+                            <Button
+                                Grid.Column="2"
+                                Text="X"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type studioEditors:ComponentThemeEditorViewModel}}, Path=RemoveNamedColorCommand}"
+                                CommandParameter="{Binding .}" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Button
+                Text="Добавить именованный цвет"
+                Command="{Binding AddNamedColorCommand}" />
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentView>

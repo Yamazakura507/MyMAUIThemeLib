@@ -4,6 +4,7 @@ using System.ComponentModel;
 using ThemeForge.Abstractions.Enums;
 using ThemeForge.Abstractions.EventArgs;
 using ThemeForge.Abstractions.Interfaces;
+using ThemeForge.Abstractions.Records;
 using ThemeForge.Abstractions.Records.UseOfGeometry;
 using ThemeForge.Abstractions.Records.UseOfTheme;
 using ThemeForge.Abstractions.Records.UseOfTypograhy;
@@ -34,6 +35,7 @@ namespace ThemeForge.Maui.Studio.ComponentModels
         private string? selectedControlType;
         private ComponentState selectedState = ComponentState.Default;
         private ThemeSettingGroup? selectedGroup;
+        private ControlThemeDescriptor? selectedDescriptor;
         private bool isGlobalEditor;
 
         [ObservableProperty]
@@ -411,6 +413,7 @@ namespace ThemeForge.Maui.Studio.ComponentModels
             selectedControlType = node.Descriptor?.ControlType;
             selectedState = node.State;
             selectedGroup = node.Group;
+            selectedDescriptor = node.Descriptor;
 
             ActiveEditor = node.Group switch
             {
@@ -533,7 +536,7 @@ namespace ThemeForge.Maui.Studio.ComponentModels
                     case EditorKind.ComponentColors:
                         if (!string.IsNullOrWhiteSpace(selectedControlType))
                         {
-                            ComponentEditor.LoadFrom(draftTheme, selectedControlType, selectedState);
+                            ComponentEditor.LoadFrom(draftTheme, selectedControlType, selectedState, selectedDescriptor);
                         }
                         break;
                 }
@@ -610,10 +613,10 @@ namespace ThemeForge.Maui.Studio.ComponentModels
                         : draftTheme.WithComponentGeometry(selectedControlType!, selectedState, geometry);
                     break;
                 case EditorKind.ComponentColors:
-                    ComponentTheme component = ComponentEditor.BuildComponentTheme();
-
                     if (!string.IsNullOrWhiteSpace(selectedControlType))
                     {
+                        ComponentTheme component = ComponentEditor.BuildComponentTheme(draftTheme);
+
                         updated = draftTheme.WithComponent(selectedControlType, selectedState, component);
                     }
                     break;

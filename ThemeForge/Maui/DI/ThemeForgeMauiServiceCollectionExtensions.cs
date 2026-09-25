@@ -13,7 +13,7 @@ namespace ThemeForge.Maui.DI
         /// </summary>
         public static IServiceCollection AddThemeForgeMaui(this IServiceCollection services)
         {
-            services.AddSingleton<ThemeResourceBuilder>();
+            services.AddSingleton(sp => new ThemeResourceBuilder(sp.GetService<IControlThemeCatalog>()));
             services.AddSingleton<IThemeApplier, MauiThemeApplier>();
             services.AddSingleton<ThemeForgeMauiCoordinator>();
 

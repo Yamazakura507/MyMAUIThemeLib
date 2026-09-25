@@ -1,6 +1,5 @@
 ﻿using ThemeForge.Abstractions.Enums;
 using ThemeForge.Abstractions.Helpers;
-using ThemeForge.Abstractions.Records.UseOfColors;
 using ThemeForge.Abstractions.Records.UseOfGeometry;
 using ThemeForge.Abstractions.Records.UseOfTheme;
 using ThemeForge.Abstractions.Records.UseOfTypograhy;
@@ -21,7 +20,6 @@ namespace ThemeForge.Maui.Studio.Helpers
 
             string key = ThemeComponentKey.Create(controlType, state);
             Dictionary<string, ComponentTheme> components = new (theme.Components);
-
             components[key] = component;
 
             return theme with
@@ -32,7 +30,7 @@ namespace ThemeForge.Maui.Studio.Helpers
         }
 
         /// <summary>
-        /// Обновляет типографику конкретного компонента.
+        /// Обновляет типографику конкретного компонента, сохраняя остальные поля.
         /// </summary>
         public static ThemeDefinition WithComponentTypography(this ThemeDefinition theme, string controlType, ComponentState state, TypographySettings typography)
         {
@@ -48,7 +46,7 @@ namespace ThemeForge.Maui.Studio.Helpers
         }
 
         /// <summary>
-        /// Обновляет геометрию конкретного компонента.
+        /// Обновляет геометрию конкретного компонента, сохраняя остальные поля.
         /// </summary>
         public static ThemeDefinition WithComponentGeometry(this ThemeDefinition theme, string controlType, ComponentState state, GeometrySettings geometry)
         {
@@ -64,37 +62,13 @@ namespace ThemeForge.Maui.Studio.Helpers
         }
 
         /// <summary>
-        /// Обновляет цвета конкретного компонента.
-        /// </summary>
-        public static ThemeDefinition WithComponentColors(
-            this ThemeDefinition theme,
-            string controlType,
-            ComponentState state,
-            ColorToken? foreground,
-            ColorToken? background,
-            ColorToken? border)
-        {
-            ComponentTheme existing = theme.GetComponentTheme(controlType, state);
-            ComponentTheme updated = existing with
-            {
-                ControlType = controlType,
-                State = state,
-                Foreground = foreground,
-                Background = background,
-                Border = border
-            };
-
-            return theme.WithComponent(controlType, state, updated);
-        }
-
-        /// <summary>
         /// Получает существующую тему компонента или создает пустую.
         /// </summary>
         public static ComponentTheme GetComponentTheme(this ThemeDefinition theme, string controlType, ComponentState state)
         {
             string key = ThemeComponentKey.Create(controlType, state);
 
-            return theme.Components.TryGetValue(key, out var component) ? component : new ComponentTheme(controlType) { State = state };
+            return theme.Components.TryGetValue(key, out ComponentTheme? component) ? component : new ComponentTheme(controlType) { State = state };
         }
     }
 }

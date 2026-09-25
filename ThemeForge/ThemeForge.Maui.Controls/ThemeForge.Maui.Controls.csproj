@@ -30,6 +30,9 @@
 	  <MauiXaml Update="Components\Editors\GeometryEditor.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Components\Editors\GradientSettingsEditor.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Components\Editors\GradientThemeEditor.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
