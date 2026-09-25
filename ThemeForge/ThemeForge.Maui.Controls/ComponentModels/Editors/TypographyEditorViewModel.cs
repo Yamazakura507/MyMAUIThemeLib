@@ -93,5 +93,20 @@ namespace ThemeForge.Maui.Controls.ComponentModels.Editors
             StrikethroughStyle = StrikethroughStyle,
             UnderlineStyle = UnderlineStyle
         };
+
+        /// <summary>
+        /// Загружает настройки из существующей типографики.
+        /// </summary>
+        public void LoadFrom(TypographySettings? settings)
+        {
+            SelectedFontFamily = settings?.FontFamily;
+            FontSize = Math.Clamp(settings?.FontSize ?? 14, MinFontSize, MaxFontSize);
+            IsBold = settings?.IsBold ?? false;
+            IsItalic = settings?.IsItalic ?? false;
+            HasStrikethrough = settings?.HasStrikethrough ?? false;
+            HasUnderline = settings?.HasUnderline ?? false;
+            StrikethroughStyle = settings?.StrikethroughStyle ?? TextDecorationStyle.Solid;
+            UnderlineStyle = settings?.UnderlineStyle ?? TextDecorationStyle.Solid;
+        }
     }
 }

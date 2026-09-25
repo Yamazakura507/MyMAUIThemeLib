@@ -10,9 +10,6 @@
     <Project Path="../ThemeForge/Services/Maui.TheColor/ThemeForge.Services.Maui.TheColor.csproj" Id="de5c9fe5-028b-4712-b49b-2856b1666211" />
     <Project Path="../ThemeForge/Services/TheColor/ThemeForge.Services.TheColor.csproj" />
   </Folder>
-  <Project Path="../ThemeLibTester/ThemeLibTester.csproj" Id="fef4e0cd-4856-432c-9ad7-b35d1551c818">
-    <Deploy Solution="Debug|*" />
-  </Project>
   <Project Path="D:/Users/danii/Downloads/Work/MyMAUIThemeLib/MyMAUIUIThemeLibTester/MyMAUIUIThemeLibTester.csproj">
     <Deploy Solution="Debug|*" />
   </Project>

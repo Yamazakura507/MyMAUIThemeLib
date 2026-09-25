@@ -1,5 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using CommunityToolkit.Maui;
+using Microsoft.Extensions.Logging;
+using SkiaSharp.Views.Maui.Controls.Hosting;
 using ThemeForge.Maui.DI;
+using ThemeForge.Maui.Studio.DI;
 using ThemeForge.Services.Maui.TheColor.DI;
 
 namespace MyMAUIUIThemeLibTester
@@ -12,12 +15,16 @@ namespace MyMAUIUIThemeLibTester
 
             builder
                 .UseMauiApp<App>()
+                .UseMauiCommunityToolkit()
+                .UseSkiaSharp()
                 .UseThemeForge(options =>
                 {
                     options.StorageDirectory = FileSystem.AppDataDirectory;
+                    options.StorageFileName = "theme-forge-themes.json";
                     options.SeedBuiltInThemes = true;
                 })
-                .UseThemeForgeTheColorApi(builder.Configuration.GetSection("ThemeForge:TheColor"));
+                .UseThemeForgeTheColorApi(builder.Configuration.GetSection("ThemeForge:TheColor"))
+                .UseThemeForgeStudio();
 
             #if DEBUG
                 builder.Logging.AddDebug();

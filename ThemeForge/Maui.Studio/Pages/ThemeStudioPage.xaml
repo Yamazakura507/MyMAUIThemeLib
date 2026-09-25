@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ThemeForge.Maui.Studio.Pages.ThemeStudioPage"
+             xmlns:controls="clr-namespace:ThemeForge.Maui.Controls.Components.Tree;assembly=ThemeForge.Maui.Controls"
+             xmlns:preview="clr-namespace:ThemeForge.Maui.Controls.Components.Preview;assembly=ThemeForge.Maui.Controls"
+             xmlns:editors="clr-namespace:ThemeForge.Maui.Controls.Components.Editors;assembly=ThemeForge.Maui.Controls"
+             xmlns:studioEditors="clr-namespace:ThemeForge.Maui.Studio.Components"
+             xmlns:studio="clr-namespace:ThemeForge.Maui.Studio"
+             xmlns:conv="clr-namespace:ThemeForge.Maui.Studio.Converters"
+             Title="Theme Studio">
+    <ContentPage.Resources>
+        <conv:EnumToBoolConverter x:Key="EnumToBool" />
+        <conv:NotNullToBoolConverter x:Key="NotNullToBool" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="8" RowSpacing="8">
+        <!-- Toolbar -->
+        <HorizontalStackLayout
+            Grid.Row="0"
+            Spacing="8"
+            VerticalOptions="Center">
+
+            <Button
+                Text="Готовые"
+                Command="{Binding SwitchToReadyCommand}" />
+
+            <Button
+                Text="Кастом"
+                Command="{Binding SwitchToCustomCommand}" />
+
+            <BoxView WidthRequest="1" BackgroundColor="Gray" />
+
+            <Button
+                Text="Простая тема"
+                Command="{Binding NewSolidThemeCommand}" />
+
+            <Button
+                Text="Градиент"
+                Command="{Binding NewGradientThemeCommand}" />
+
+            <BoxView WidthRequest="1" BackgroundColor="Gray" />
+
+            <Picker
+                Title="Preview"
+                ItemsSource="{Binding PreviewModes}"
+                SelectedItem="{Binding PreviewMode, Mode=TwoWay}"
+                WidthRequest="160" />
+
+            <BoxView WidthRequest="1" BackgroundColor="Gray" />
+
+            <Button
+                Text="Сброс"
+                Command="{Binding ResetDraftCommand}" />
+
+            <Button
+                Text="Сохранить"
+                Command="{Binding SaveDraftCommand}" />
+
+            <Button
+                Text="Сохранить и применить"
+                Command="{Binding SaveAndApplyDraftCommand}" />
+
+            <Button
+                Text="Применить"
+                Command="{Binding ApplyDraftCommand}" />
+        </HorizontalStackLayout>
+
+        <!-- Status -->
+        <Label
+            Grid.Row="1"
+            Text="{Binding StatusMessage}"
+            Opacity="0.8"
+            LineBreakMode="TailTruncation" />
+
+        <!-- Main area -->
+        <Grid
+            Grid.Row="2"
+            RowDefinitions="260,Auto,*"
+            RowSpacing="8">
+
+            <!-- Tree -->
+            <Border
+                Grid.Row="0"
+                Stroke="Gray"
+                StrokeThickness="1"
+                Padding="4">
+                <controls:ThemeTreeView
+                    BindingContext="{Binding CurrentTree}"
+                    SelectedItem="{Binding SelectedNode, Mode=TwoWay}" />
+            </Border>
+
+            <!-- Editors -->
+            <Border
+                Grid.Row="1"
+                Stroke="Gray"
+                StrokeThickness="1"
+                Padding="4">
+                <ScrollView>
+                    <VerticalStackLayout Spacing="8" Padding="4">
+                        <Label
+                            Text="Редактор"
+                            FontAttributes="Bold"
+                            IsVisible="{Binding ActiveEditor, Converter={StaticResource NotNullToBool}}" />
+
+                        <!-- Solid editor -->
+                        <editors:SolidThemeEditor
+                            BindingContext="{Binding SolidEditor}"
+                            IsVisible="{Binding ActiveEditor, Converter={StaticResource EnumToBool}, ConverterParameter=AddSolid}" />
+
+                        <Button
+                            Text="Добавить в пресеты"
+                            Command="{Binding AddSolidThemeToPresetsCommand}"
+                            IsVisible="{Binding ActiveEditor, Converter={StaticResource EnumToBool}, ConverterParameter=AddSolid}" />
+
+                        <!-- Gradient editor -->
+                        <editors:GradientThemeEditor
+                            BindingContext="{Binding GradientEditor}"
+                            IsVisible="{Binding ActiveEditor, Converter={StaticResource EnumToBool}, ConverterParameter=AddGradient}" />
+
+                        <Button
+                            Text="Добавить в пресеты"
+                            Command="{Binding AddGradientThemeToPresetsCommand}"
+                            IsVisible="{Binding ActiveEditor, Converter={StaticResource EnumToBool}, ConverterParameter=AddGradient}" />
+
+                        <!-- Typography editor -->
+                        <editors:TypographyEditor
+                            BindingContext="{Binding TypographyEditor}"
+                            IsVisible="{Binding ActiveEditor, Converter={StaticResource EnumToBool}, ConverterParameter=Typography}" />
+
+                        <!-- Geometry editor -->
+                        <editors:GeometryEditor
+                            BindingContext="{Binding GeometryEditor}"
+                            IsVisible="{Binding ActiveEditor, Converter={StaticResource EnumToBool}, ConverterParameter=Geometry}" />
+
+                        <!-- Component colors editor -->
+                        <studioEditors:ComponentThemeEditor
+                            BindingContext="{Binding ComponentEditor}"
+                            IsVisible="{Binding ActiveEditor, Converter={StaticResource EnumToBool}, ConverterParameter=ComponentColors}" />
+
+                        <Label
+                            Text="Выберите тему или группу настроек в дереве."
+                            IsVisible="{Binding ActiveEditor, Converter={StaticResource EnumToBool}, ConverterParameter=None}"
+                            Opacity="0.7" />
+                    </VerticalStackLayout>
+                </ScrollView>
+            </Border>
+
+            <!-- Preview -->
+            <Border
+                Grid.Row="2"
+                Stroke="Gray"
+                StrokeThickness="1"
+                Padding="4">
+                <preview:ThemePreviewSurface
+                    Theme="{Binding Draft}"
+                    Mode="{Binding PreviewMode}" />
+            </Border>
+        </Grid>
+
+        <!-- Bottom info -->
+        <HorizontalStackLayout
+            Grid.Row="3"
+            Spacing="12"
+            VerticalOptions="Center">
+
+            <Label Text="Несохраненные изменения:" />
+            <Label
+                Text="{Binding HasUnsavedChanges}"
+                FontAttributes="Bold" />
+        </HorizontalStackLayout>
+    </Grid>
+</ContentPage>

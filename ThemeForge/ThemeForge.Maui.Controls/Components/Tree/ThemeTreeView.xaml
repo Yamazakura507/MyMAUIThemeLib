@@ -167,6 +167,8 @@
 
     <CollectionView
         ItemsSource="{Binding VisibleNodes}"
-        ItemTemplateSelector="{StaticResource NodeSelector}"
-        VerticalOptions="FillAndExpand" />
+        ItemTemplate="{StaticResource NodeSelector}"
+        SelectionMode="Single"
+        SelectedItem="{Binding SelectedItem, Source={RelativeSource AncestorType={x:Type ContentView}}, Mode=TwoWay}"
+        VerticalOptions="Fill" />
 </ContentView>

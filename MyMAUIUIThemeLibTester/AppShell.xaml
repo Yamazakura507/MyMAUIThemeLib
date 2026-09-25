@@ -4,11 +4,13 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:MyMAUIUIThemeLibTester"
+    xmlns:studio="clr-namespace:ThemeForge.Maui.Studio.Pages;assembly=ThemeForge.Maui.Studio"
+    Shell.FlyoutBehavior="Disabled"
     Title="MyMAUIUIThemeLibTester">
 
     <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+        Title="Theme Studio"
+        ContentTemplate="{DataTemplate studio:ThemeStudioPage}"
+        Route="ThemeStudioPage" />
 
 </Shell>

@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ThemeForge.Maui.Controls.Components.Editors.GradientThemeEditor"
              xmlns:editors="clr-namespace:ThemeForge.Maui.Controls.ComponentModels.Editors"
+             xmlns:helpers="clr-namespace:ThemeForge.Maui.Controls.Helpers"
              x:DataType="editors:GradientThemeEditorViewModel">
     <ScrollView>
         <VerticalStackLayout Spacing="10" Padding="8">
@@ -41,7 +42,7 @@
 
             <Label Text="Геометрия" FontAttributes="Bold" />
 
-            <HorizontalStackLayout IsVisible="{Binding Type, Converter={x:Static editors:GradientTypeVisibility.IsLinear}}">
+            <HorizontalStackLayout IsVisible="{Binding Type, Converter={x:Static helpers:GradientTypeVisibility.IsLinear}}">
                 <Label Text="Угол" VerticalOptions="Center" />
                 <Slider
                     Minimum="0"
@@ -50,7 +51,7 @@
                     WidthRequest="180" />
             </HorizontalStackLayout>
 
-            <Grid ColumnDefinitions="*,*" IsVisible="{Binding Type, Converter={x:Static editors:GradientTypeVisibility.IsRadial}}">
+            <Grid ColumnDefinitions="*,*" IsVisible="{Binding Type, Converter={x:Static helpers:GradientTypeVisibility.IsRadial}}">
                 <VerticalStackLayout Grid.Column="0">
                     <Label Text="Center X" />
                     <Slider Minimum="0" Maximum="1" Value="{Binding CenterX, Mode=TwoWay}" />
@@ -61,7 +62,7 @@
                 </VerticalStackLayout>
             </Grid>
 
-            <HorizontalStackLayout IsVisible="{Binding Type, Converter={x:Static editors:GradientTypeVisibility.IsRadial}}">
+            <HorizontalStackLayout IsVisible="{Binding Type, Converter={x:Static helpers:GradientTypeVisibility.IsRadial}}">
                 <Label Text="Radius" VerticalOptions="Center" />
                 <Slider
                     Minimum="0.1"

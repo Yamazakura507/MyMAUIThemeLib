@@ -58,5 +58,23 @@ namespace ThemeForge.Maui.Controls.ComponentModels.Editors
             ShadowOpacity = ShadowOpacity,
             Elevation = Elevation
         };
+
+        /// <summary>
+        /// Загружает настройки из существующей геометрии.
+        /// </summary>
+        public void LoadFrom(GeometrySettings? settings)
+        {
+            CornerRadius = settings?.CornerRadius ?? 8;
+            BorderThickness = settings?.BorderThickness ?? 1;
+            Padding = settings?.Padding ?? 12;
+            Margin = settings?.Margin ?? 8;
+            ThumbDiameter = settings?.ThumbDiameter ?? 16;
+            TrackThickness = settings?.TrackThickness ?? 4;
+            IndicatorSize = settings?.IndicatorSize ?? 18;
+            HasShadow = settings?.HasShadow ?? false;
+            ShadowRadius = settings?.ShadowRadius ?? 4;
+            ShadowOpacity = settings?.ShadowOpacity ?? 0.18;
+            Elevation = settings?.Elevation ?? 0;
+        }
     }
 }

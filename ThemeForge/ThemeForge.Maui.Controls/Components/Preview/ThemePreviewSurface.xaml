@@ -8,8 +8,8 @@
     <Grid>
         <skia:EffectCanvas
             x:Name="BackgroundCanvas"
-            HorizontalOptions="FillAndExpand"
-            VerticalOptions="FillAndExpand"
+            HorizontalOptions="Fill"
+            VerticalOptions="Fill"
             BackgroundColor="Transparent" />
 
         <ScrollView BackgroundColor="Transparent">

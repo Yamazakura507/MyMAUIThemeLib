@@ -32,8 +32,8 @@
             <Grid>
                 <skia:EffectCanvas
                     x:Name="BackgroundCanvas"
-                    HorizontalOptions="FillAndExpand"
-                    VerticalOptions="FillAndExpand"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill"
                     BackgroundColor="Transparent" />
 
                 <VerticalStackLayout
@@ -63,8 +63,8 @@
             ScrimOpacity="0.55"
             Opacity="0"
             IsVisible="False"
-            HorizontalOptions="FillAndExpand"
-            VerticalOptions="FillAndExpand"
+            HorizontalOptions="Fill"
+            VerticalOptions="Fill"
             BackgroundColor="Transparent">
             <skia:BackdropBlurCanvas.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding HideOverlayCommand}" />
