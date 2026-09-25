@@ -102,6 +102,42 @@
                     WidthRequest="140" />
             </HorizontalStackLayout>
 
+            <VerticalStackLayout
+                Spacing="6"
+                IsVisible="{Binding IsLottieEffect}"
+                IsEnabled="{Binding EffectEnabled}">
+
+                <Label Text="Lottie" FontAttributes="Bold" />
+
+                <Label Text="Локальный asset" />
+                <Entry
+                    Placeholder="Animations/loading.json"
+                    Text="{Binding LottieAssetName, Mode=TwoWay}" />
+
+                <Label Text="URL" />
+                <Entry
+                    Placeholder="https://example.com/animation.json"
+                    Text="{Binding LottieUrl, Mode=TwoWay}" />
+
+                <HorizontalStackLayout Spacing="12">
+                    <CheckBox IsChecked="{Binding LottieLoop, Mode=TwoWay}" />
+                    <Label Text="Loop" VerticalOptions="Center" />
+
+                    <CheckBox IsChecked="{Binding LottieAutoPlay, Mode=TwoWay}" />
+                    <Label Text="AutoPlay" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+
+                <Label Text="Tint color" />
+                <Entry
+                    Placeholder="#FFFFFF"
+                    Text="{Binding LottieTintColorHex, Mode=TwoWay}" />
+
+                <Label Text="Scale mode" />
+                <Picker
+                    ItemsSource="{Binding LottieScaleModes}"
+                    SelectedItem="{Binding LottieScaleMode, Mode=TwoWay}" />
+            </VerticalStackLayout>
+
             <Button
                 Text="Собрать тему"
                 Command="{Binding BuildCommand}" />

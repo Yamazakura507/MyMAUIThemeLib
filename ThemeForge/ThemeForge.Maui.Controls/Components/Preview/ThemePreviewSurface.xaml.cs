@@ -100,13 +100,14 @@ public partial class ThemePreviewSurface : ContentView
     {
         if (Theme is null)
         {
-            BackgroundCanvas.DisplayBrush = null;
-            BackgroundCanvas.Effect = null;
+            BackgroundHost.DisplayBrush = null;
+            BackgroundHost.Effect = null;
             return;
         }
 
-        BackgroundCanvas.DisplayBrush = ThemeDisplayBrushFactory.CreateDisplayBrush(Theme, ThemePresentationMode.Automatic);
-        BackgroundCanvas.Effect = ThemeDisplayBrushFactory.ResolveEffect(Theme);
+        BackgroundHost.DisplayBrush = ThemeDisplayBrushFactory.CreateDisplayBrush(Theme, ThemePresentationMode.Automatic);
+
+        BackgroundHost.Effect = ThemeDisplayBrushFactory.ResolveEffect(Theme);
     }
 
     private void ApplyPreviewMode() => ThemePreview.ApplyToDescendants(PreviewRoot, Mode);

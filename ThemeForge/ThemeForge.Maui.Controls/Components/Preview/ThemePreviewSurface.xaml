@@ -2,12 +2,12 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ThemeForge.Maui.Controls.Components.Preview.ThemePreviewSurface"
-             xmlns:skia="clr-namespace:ThemeForge.Maui.Controls.ComponentModels.Skia"
+             xmlns:host="clr-namespace:ThemeForge.Maui.Controls.Components.Lottie"
              xmlns:preview="clr-namespace:ThemeForge.Maui.Controls.Components.Preview"
              x:DataType="preview:ThemePreviewSurface">
     <Grid>
-        <skia:EffectCanvas
-            x:Name="BackgroundCanvas"
+        <host:ThemeBackgroundHost
+            x:Name="BackgroundHost"
             HorizontalOptions="Fill"
             VerticalOptions="Fill"
             BackgroundColor="Transparent" />

@@ -36,6 +36,9 @@
 	  <MauiXaml Update="Components\Editors\SolidThemeEditor.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Components\Lottie\ThemeBackgroundHost.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Components\Themes\ThemePresetCard.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

@@ -183,16 +183,16 @@ public partial class ThemePresetCard : ContentView
     {
         if (Theme is null)
         {
-            BackgroundCanvas.DisplayBrush = null;
-            BackgroundCanvas.Effect = null;
+            BackgroundHost.DisplayBrush = null;
+            BackgroundHost.Effect = null;
             return;
         }
 
         Brush brush = ThemeDisplayBrushFactory.CreateDisplayBrush(Theme, PresentationMode);
         EffectSettings? effect = ThemeDisplayBrushFactory.ResolveEffect(Theme);
 
-        BackgroundCanvas.DisplayBrush = brush;
-        BackgroundCanvas.Effect = effect;
+        BackgroundHost.DisplayBrush = brush;
+        BackgroundHost.Effect = effect;
     }
 
     private void UpdateTitleAndDetail()

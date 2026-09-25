@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using ThemeForge.Abstractions.Enums;
+using ThemeForge.Abstractions.Helpers;
 using ThemeForge.Abstractions.Interfaces;
 using ThemeForge.Abstractions.Records.UseOfColors;
 using ThemeForge.Abstractions.Records.UseOfColors.Gradients;
@@ -47,6 +49,7 @@ namespace ThemeForge.Maui.Controls.ComponentModels.Editors
         private bool effectEnabled;
 
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsLottieEffect))]
         private EffectKind effectKind = EffectKind.MovingColors;
 
         [ObservableProperty]
@@ -57,6 +60,24 @@ namespace ThemeForge.Maui.Controls.ComponentModels.Editors
 
         [ObservableProperty]
         private ThemeDefinition? previewTheme;
+
+        [ObservableProperty]
+        private string? lottieAssetName;
+
+        [ObservableProperty]
+        private string? lottieUrl;
+
+        [ObservableProperty]
+        private bool lottieLoop = true;
+
+        [ObservableProperty]
+        private bool lottieAutoPlay = true;
+
+        [ObservableProperty]
+        private string? lottieTintColorHex;
+
+        [ObservableProperty]
+        private string lottieScaleMode = "AspectFit";
 
         /// <summary>
         /// Доступные типы градиента.
@@ -69,6 +90,22 @@ namespace ThemeForge.Maui.Controls.ComponentModels.Editors
         public Array EffectKinds { get; } = Enum.GetValues(typeof(EffectKind));
 
         /// <summary>
+        /// Доступные режимы масштабирования Lottie.
+        /// </summary>
+        public IReadOnlyList<string> LottieScaleModes { get; } =
+        [
+            "AspectFit",
+            "AspectFill",
+            "Zoom",
+            "Uniform"
+        ];
+
+        /// <summary>
+        /// True, если выбран Lottie-эффект.
+        /// </summary>
+        public bool IsLottieEffect => EffectKind == EffectKind.Lottie;
+
+        /// <summary>
         /// Остановки градиента.
         /// </summary>
         public ObservableCollection<GradientStopViewModel> Stops { get; } = [];
@@ -79,7 +116,6 @@ namespace ThemeForge.Maui.Controls.ComponentModels.Editors
         public GradientThemeEditorViewModel(IThemeFactory themeFactory)
         {
             this.themeFactory = themeFactory;
-
             EnsureStops(ColorCount);
         }
 
@@ -109,16 +145,53 @@ namespace ThemeForge.Maui.Controls.ComponentModels.Editors
                 _ => new GradientGeometry()
             };
 
-            EffectSettings? effect = EffectEnabled ? 
-                new EffectSettings
+            EffectSettings? effect = EffectEnabled
+                ? new EffectSettings
                 {
                     IsEnabled = true,
                     Kind = EffectKind,
                     Intensity = EffectIntensity,
-                    Speed = EffectSpeed
+                    Speed = EffectSpeed,
+                    Parameters = BuildEffectParameters()
                 } : null;
 
             PreviewTheme = await themeFactory.CreateGradientAsync(Type, hexes, geometry, effect, cancellationToken: cancellationToken);
+        }
+
+        private IReadOnlyDictionary<string, string> BuildEffectParameters()
+        {
+            if (!EffectEnabled || EffectKind != EffectKind.Lottie)
+            {
+                return new Dictionary<string, string>();
+            }
+
+            Dictionary<string, string> parameters = new (StringComparer.OrdinalIgnoreCase);
+
+            if (!string.IsNullOrWhiteSpace(LottieAssetName))
+            {
+                parameters[LottieEffectParameters.AssetName] = LottieAssetName;
+            }
+
+            if (!string.IsNullOrWhiteSpace(LottieUrl))
+            {
+                parameters[LottieEffectParameters.Url] = LottieUrl;
+            }
+
+            parameters[LottieEffectParameters.Loop] = LottieLoop ? bool.TrueString : bool.FalseString;
+            parameters[LottieEffectParameters.AutoPlay] = LottieAutoPlay ? bool.TrueString : bool.FalseString;
+            parameters[LottieEffectParameters.Speed] = EffectSpeed.ToString("0.###", CultureInfo.InvariantCulture);
+
+            if (!string.IsNullOrWhiteSpace(LottieTintColorHex))
+            {
+                parameters[LottieEffectParameters.TintColorHex] = LottieTintColorHex;
+            }
+
+            if (!string.IsNullOrWhiteSpace(LottieScaleMode))
+            {
+                parameters[LottieEffectParameters.ScaleMode] = LottieScaleMode;
+            }
+
+            return parameters;
         }
 
         private void EnsureStops(int requestedCount)
@@ -128,7 +201,6 @@ namespace ThemeForge.Maui.Controls.ComponentModels.Editors
             if (ColorCount != count)
             {
                 ColorCount = count;
-
                 return;
             }
 
